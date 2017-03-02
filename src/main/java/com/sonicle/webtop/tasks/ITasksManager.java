@@ -52,7 +52,7 @@ public interface ITasksManager {
 	public Category updateCategory(Category cat) throws Exception;
 	public boolean deleteCategory(int categoryId) throws WTException;
 	//public List<CategoryTasks> listTasks(CategoryRoot root, Integer[] categoryFolders, String pattern) throws WTException;
-	//public List<CategoryTasks> listTasks(UserProfile.Id pid, Integer[] categoryFolders, String pattern) throws WTException;
+	//public List<CategoryTasks> listTasks(UserProfileId pid, Integer[] categoryFolders, String pattern) throws WTException;
 	public Task getTask(int taskId) throws WTException;
 	public void addTask(Task task) throws WTException;
 	public void updateTask(Task task) throws WTException;
