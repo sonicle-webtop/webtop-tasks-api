@@ -51,7 +51,7 @@ public class Task {
 	private DateTime completedDate;
 	private Short importance;
 	private Boolean isPrivate;
-	private String status;
+	private TaskStatus status;
 	private Short completionPercentage;
 	private DateTime reminderDate;
 	private DateTime remindedOn;
@@ -154,11 +154,11 @@ public class Task {
 		this.isPrivate = isPrivate;
 	}
 
-	public String getStatus() {
+	public TaskStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(TaskStatus status) {
 		this.status = status;
 	}
 
