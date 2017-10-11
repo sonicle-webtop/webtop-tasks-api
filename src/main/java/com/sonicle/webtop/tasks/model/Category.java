@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import org.apache.commons.lang3.StringUtils;
 
@@ -137,5 +138,11 @@ public class Category {
 	
 	public static String getHexColor(String color) {
 		return (StringUtils.indexOf(color, "#") == 0) ? StringUtils.substring(color, 1) : color;
+	}
+	
+	public static enum Sync {
+		@SerializedName("O") OFF,
+		@SerializedName("R") READ,
+		@SerializedName("W") WRITE;
 	}
 }

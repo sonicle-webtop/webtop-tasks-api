@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
 
 /**
@@ -41,7 +42,7 @@ import org.joda.time.DateTime;
 public class Task {
 	private Integer taskId;
 	private Integer categoryId;
-	private String revisionStatus;
+	private RevisionStatus revisionStatus;
 	private DateTime revisionTimestamp;
 	private String publicUid;
 	private String subject;
@@ -51,7 +52,7 @@ public class Task {
 	private DateTime completedDate;
 	private Short importance;
 	private Boolean isPrivate;
-	private TaskStatus status;
+	private Status status;
 	private Short completionPercentage;
 	private DateTime reminderDate;
 	private DateTime remindedOn;
@@ -74,11 +75,11 @@ public class Task {
 		this.categoryId = categoryId;
 	}
 	
-	public String getRevisionStatus() {
+	public RevisionStatus getRevisionStatus() {
 		return revisionStatus;
 	}
 
-	public void setRevisionStatus(String revisionStatus) {
+	public void setRevisionStatus(RevisionStatus revisionStatus) {
 		this.revisionStatus = revisionStatus;
 	}
 
@@ -154,11 +155,11 @@ public class Task {
 		this.isPrivate = isPrivate;
 	}
 
-	public TaskStatus getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(TaskStatus status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
@@ -184,5 +185,19 @@ public class Task {
 
 	public void setRemindedOn(DateTime remindedOn) {
 		this.remindedOn = remindedOn;
+	}
+	
+	public static enum RevisionStatus {
+		@SerializedName("N") NEW,
+		@SerializedName("M") MODIFIED,
+		@SerializedName("D") DELETED;
+	}
+	
+	public static enum Status {
+		@SerializedName("notstarted") NOT_STARTED,
+		@SerializedName("inprogress") IN_PROGRESS,
+		@SerializedName("completed") COMPLETED,
+		@SerializedName("waiting") WAITING,
+		@SerializedName("deferred") DEFERRED;
 	}
 }

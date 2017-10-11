@@ -32,15 +32,33 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.sonicle.webtop.core.sdk.UserProfileId;
+
 /**
  *
  * @author malbinola
  */
-public enum Sync {
-	OFF("O"), READ("R"), WRITE("W");
-		
-	private final String value;
-	private Sync(String value) { this.value = value; }
-	@Override
-	public String toString() { return value; }
+public class TaskEx extends Task {
+	private String categoryDomainId;
+	private String categoryUserId;
+	
+	public String getCategoryDomainId() {
+		return categoryDomainId;
+	}
+
+	public void setCategoryDomainId(String value) {
+		categoryDomainId = value;
+	}
+	
+	public String getCategoryUserId() {
+		return categoryUserId;
+	}
+
+	public void setCategoryUserId(String value) {
+		categoryUserId = value;
+	}
+	
+	public UserProfileId getCategoryProfileId() {
+		return new UserProfileId(categoryDomainId, categoryUserId);
+	}
 }
