@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.rits.cloning.Cloner;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 
 /**
@@ -41,6 +42,15 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
 public class TaskEx extends Task {
 	private String categoryDomainId;
 	private String categoryUserId;
+	
+	public TaskEx() {
+		super();
+	}
+	
+	public TaskEx(Task task) {
+		super();
+		Cloner.standard().copyPropertiesOfInheritedClass(task, this);
+	}
 	
 	public String getCategoryDomainId() {
 		return categoryDomainId;

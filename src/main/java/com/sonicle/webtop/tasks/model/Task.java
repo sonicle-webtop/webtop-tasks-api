@@ -190,7 +190,7 @@ public class Task {
 	public static enum RevisionStatus {
 		@SerializedName("N") NEW,
 		@SerializedName("M") MODIFIED,
-		@SerializedName("D") DELETED;
+		@SerializedName("D") DELETED
 	}
 	
 	public static enum Status {
@@ -198,6 +198,6 @@ public class Task {
 		@SerializedName("inprogress") IN_PROGRESS,
 		@SerializedName("completed") COMPLETED,
 		@SerializedName("waiting") WAITING,
-		@SerializedName("deferred") DEFERRED;
+		@SerializedName("deferred") DEFERRED
 	}
 }
