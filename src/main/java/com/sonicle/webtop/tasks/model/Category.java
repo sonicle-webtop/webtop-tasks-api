@@ -143,6 +143,6 @@ public class Category {
 	public static enum Sync {
 		@SerializedName("O") OFF,
 		@SerializedName("R") READ,
-		@SerializedName("W") WRITE;
+		@SerializedName("W") WRITE
 	}
 }
