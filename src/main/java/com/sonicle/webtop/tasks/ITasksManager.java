@@ -35,6 +35,7 @@ package com.sonicle.webtop.tasks;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.tasks.model.Category;
 import com.sonicle.webtop.tasks.model.CategoryFolder;
+import com.sonicle.webtop.tasks.model.CategoryPropertySet;
 import com.sonicle.webtop.tasks.model.CategoryRoot;
 import com.sonicle.webtop.tasks.model.FolderTasks;
 import com.sonicle.webtop.tasks.model.Task;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -60,7 +62,10 @@ public interface ITasksManager {
 	public Category addBuiltInCategory() throws WTException;
 	public Category updateCategory(Category cat) throws Exception;
 	public boolean deleteCategory(int categoryId) throws WTException;
-	public List<FolderTasks> listFolderTasks(Collection<Integer> categoryFolderIds, String pattern) throws WTException;
+	public CategoryPropertySet getCategoryCustomProps(int categoryId) throws WTException;
+	public Map<Integer, CategoryPropertySet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
+	public CategoryPropertySet updateCategoryCustomProps(int categoryId, CategoryPropertySet propertySet) throws WTException;	
+	public List<FolderTasks> listFolderTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
 	public Task getTask(int taskId) throws WTException;
 	public void addTask(Task task) throws WTException;
 	public void updateTask(Task task) throws WTException;
