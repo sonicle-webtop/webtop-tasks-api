@@ -36,12 +36,12 @@ package com.sonicle.webtop.tasks.model;
  *
  * @author malbinola
  */
-public class CategoryPropertySet {
+public class CategoryPropSet {
 	private Boolean hidden;
 	private String color;
 	private Category.Sync sync;
 	
-	public CategoryPropertySet() {}
+	public CategoryPropSet() {}
 
 	public Boolean getHidden() {
 		return hidden;
@@ -67,7 +67,7 @@ public class CategoryPropertySet {
 		this.sync = sync;
 	}
 	
-	public void set(CategoryPropertySet obj) {
+	public void set(CategoryPropSet obj) {
 		this.hidden = obj.getHidden();
 		this.color = obj.getColor();
 		this.sync = obj.getSync();
