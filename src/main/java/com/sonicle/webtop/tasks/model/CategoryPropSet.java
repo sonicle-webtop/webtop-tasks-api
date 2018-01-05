@@ -32,6 +32,8 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author malbinola
@@ -46,6 +48,10 @@ public class CategoryPropSet {
 	public Boolean getHidden() {
 		return hidden;
 	}
+	
+	public boolean getHiddenOrDefault(boolean defaultHidden) {
+		return (hidden == null) ? defaultHidden : getHidden();
+	}
 
 	public void setHidden(Boolean hidden) {
 		this.hidden = hidden;
@@ -54,6 +60,10 @@ public class CategoryPropSet {
 	public String getColor() {
 		return color;
 	}
+	
+	public String getColorOrDefault(String defaultColor) {
+		return StringUtils.isBlank(color) ? defaultColor : getColor();
+	}
 
 	public void setColor(String color) {
 		this.color = color;
@@ -61,6 +71,10 @@ public class CategoryPropSet {
 
 	public Category.Sync getSync() {
 		return sync;
+	}
+	
+	public Category.Sync getSyncOrDefault(Category.Sync defaultSync) {
+		return (sync == null) ? defaultSync : getSync();
 	}
 
 	public void setSync(Category.Sync sync) {

@@ -34,14 +34,13 @@ package com.sonicle.webtop.tasks;
 
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.tasks.model.Category;
-import com.sonicle.webtop.tasks.model.CategoryFolder;
+import com.sonicle.webtop.tasks.model.ShareFolderCategory;
 import com.sonicle.webtop.tasks.model.CategoryPropSet;
-import com.sonicle.webtop.tasks.model.CategoryRoot;
+import com.sonicle.webtop.tasks.model.ShareRootCategory;
 import com.sonicle.webtop.tasks.model.FolderTasks;
 import com.sonicle.webtop.tasks.model.Task;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +50,8 @@ import java.util.Map;
  */
 public interface ITasksManager {
 	
-	public List<CategoryRoot> listIncomingCategoryRoots() throws WTException;
-	public HashMap<Integer, CategoryFolder> listIncomingCategoryFolders(String rootShareId) throws WTException;
+	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
+	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
 	public List<Category> listCategories() throws WTException;
 	public List<Integer> listCategoryIds() throws WTException;
 	public List<Integer> listIncomingCategoryIds() throws WTException;
