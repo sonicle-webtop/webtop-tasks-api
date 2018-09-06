@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2018 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,25 +28,21 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2018 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.tasks.model;
+package com.sonicle.webtop.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sonicle.commons.IdentifierUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
- * @author rfullone
+ * @author malbinola
  */
-public class Task extends BaseTask {
-	private List<TaskAttachment> attachments = new ArrayList<>();
+public class TasksUtils {
 	
-	public List<TaskAttachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<TaskAttachment> attachments) {
-		this.attachments = attachments;
+	public static String buildTaskUid(int taskId, String internetName) {
+		String id = IdentifierUtils.getUUIDTimeBased(true) + "." + String.valueOf(taskId);
+		return DigestUtils.md5Hex(id) + "@" + internetName;
 	}
 }
