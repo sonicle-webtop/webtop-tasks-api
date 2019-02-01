@@ -40,22 +40,21 @@ import org.joda.time.DateTime;
  * @author malbinola
  */
 public class BaseTask {
-	private Integer taskId;
-	private Integer categoryId;
-	private RevisionStatus revisionStatus;
-	private DateTime revisionTimestamp;
-	private String publicUid;
-	private String subject;
-	private String description;
-	private DateTime startDate;
-	private DateTime dueDate;
-	private DateTime completedDate;
-	private Short importance;
-	private Boolean isPrivate;
-	private Status status;
-	private Short completionPercentage;
-	private DateTime reminderDate;
-	private DateTime remindedOn;
+	protected Integer taskId;
+	protected String publicUid;
+	protected Integer categoryId;
+	protected RevisionStatus revisionStatus;
+	protected DateTime revisionTimestamp;
+	protected DateTime creationTimestamp;
+	protected String subject;
+	protected DateTime startDate;
+	protected DateTime dueDate;
+	protected DateTime completedDate;
+	protected Short importance;
+	protected Boolean isPrivate;
+	protected Status status;
+	protected Short completionPercentage;
+	protected DateTime reminderDate;
 
 	public Integer getTaskId() {
 		return taskId;
@@ -63,6 +62,14 @@ public class BaseTask {
 
 	public void setTaskId(Integer taskId) {
 		this.taskId = taskId;
+	}
+	
+	public String getPublicUid() {
+		return publicUid;
+	}
+
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
 	}
 	
 	public Integer getCategoryId() {
@@ -88,13 +95,13 @@ public class BaseTask {
 	public void setRevisionTimestamp(DateTime revisionTimestamp) {
 		this.revisionTimestamp = revisionTimestamp;
 	}
-
-	public String getPublicUid() {
-		return publicUid;
+	
+	public DateTime getCreationTimestamp() {
+		return creationTimestamp;
 	}
 
-	public void setPublicUid(String publicUid) {
-		this.publicUid = publicUid;
+	public void setCreationTimestamp(DateTime creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
 	}
 
 	public String getSubject() {
@@ -103,14 +110,6 @@ public class BaseTask {
 
 	public void setSubject(String subject) {
 		this.subject = subject;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public DateTime getStartDate() {
@@ -175,14 +174,6 @@ public class BaseTask {
 
 	public void setReminderDate(DateTime reminderDate) {
 		this.reminderDate = reminderDate;
-	}
-
-	public DateTime getRemindedOn() {
-		return remindedOn;
-	}
-
-	public void setRemindedOn(DateTime remindedOn) {
-		this.remindedOn = remindedOn;
 	}
 	
 	public static enum RevisionStatus {

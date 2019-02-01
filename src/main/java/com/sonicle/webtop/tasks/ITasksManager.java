@@ -32,18 +32,24 @@
  */
 package com.sonicle.webtop.tasks;
 
+import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.tasks.model.Category;
 import com.sonicle.webtop.tasks.model.ShareFolderCategory;
 import com.sonicle.webtop.tasks.model.CategoryPropSet;
 import com.sonicle.webtop.tasks.model.ShareRootCategory;
-import com.sonicle.webtop.tasks.model.FolderTasks;
+import com.sonicle.webtop.tasks.model.ListTasksResult;
 import com.sonicle.webtop.tasks.model.Task;
 import com.sonicle.webtop.tasks.model.TaskAttachmentWithBytes;
+import com.sonicle.webtop.tasks.model.TaskLookup;
+import com.sonicle.webtop.tasks.model.TaskObject;
+import com.sonicle.webtop.tasks.model.TaskObjectChanged;
+import com.sonicle.webtop.tasks.model.TaskObjectWithICalendar;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -53,9 +59,10 @@ public interface ITasksManager {
 	
 	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
 	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
-	public List<Category> listCategories() throws WTException;
 	public List<Integer> listCategoryIds() throws WTException;
 	public List<Integer> listIncomingCategoryIds() throws WTException;
+	public Map<Integer, Category> listCategories() throws WTException;
+	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;
 	public Category addCategory(Category cat) throws WTException;
@@ -63,13 +70,22 @@ public interface ITasksManager {
 	public void updateCategory(Category cat) throws Exception;
 	public boolean deleteCategory(int categoryId) throws WTException;
 	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
-	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
-	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;	
-	public List<FolderTasks> listFolderTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
+	public Map<Integer, CategoryPropSet> getCategoriesCustomProps(Collection<Integer> categoryIds) throws WTException;
+	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
+	public List<TaskObject> listTaskObjects(int categoryId, TaskObjectOutputType outputType) throws WTException;
+	public LangUtils.CollectionChangeSet<TaskObjectChanged> listTaskObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
+	public TaskObjectWithICalendar getTaskObjectWithICalendar(int categoryId, String href) throws WTException;
+	public List<TaskObjectWithICalendar> getTaskObjectsWithICalendar(int categoryId, Collection<String> hrefs) throws WTException;
+	public TaskObject getTaskObject(int categoryId, int taskId, TaskObjectOutputType outputType) throws WTException;
+	public ListTasksResult listTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
+	public ListTasksResult listTasks(Collection<Integer> categoryIds, String pattern, int page, int limit, boolean returnFullCount) throws WTException;
+	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds) throws WTException;
+	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
 	public Task getTask(int taskId) throws WTException;
 	public TaskAttachmentWithBytes getTaskAttachment(int taskId, String attachmentId) throws WTException;
 	public Task addTask(Task task) throws WTException;
 	public void updateTask(Task task) throws WTException;
+	public void updateTask(Task task, boolean processAttachments) throws WTException;
 	public void deleteTask(int taskId) throws WTException;
 	public void deleteTask(ArrayList<Integer> taskIds) throws WTException;
 	public int deleteAllTasks(int categoryId) throws WTException;
