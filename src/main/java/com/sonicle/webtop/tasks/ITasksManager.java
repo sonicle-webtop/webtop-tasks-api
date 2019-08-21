@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks;
 
+import com.sonicle.webtop.tasks.model.TaskQuery;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.tasks.model.Category;
@@ -50,6 +51,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.joda.time.DateTime;
+import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 
 /**
  *
@@ -77,8 +79,8 @@ public interface ITasksManager {
 	public TaskObjectWithICalendar getTaskObjectWithICalendar(int categoryId, String href) throws WTException;
 	public List<TaskObjectWithICalendar> getTaskObjectsWithICalendar(int categoryId, Collection<String> hrefs) throws WTException;
 	public TaskObject getTaskObject(int categoryId, int taskId, TaskObjectOutputType outputType) throws WTException;
-	public ListTasksResult listTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
-	public ListTasksResult listTasks(Collection<Integer> categoryIds, String pattern, int page, int limit, boolean returnFullCount) throws WTException;
+	public ListTasksResult listTasks(Collection<Integer> categoryIds, Condition<TaskQuery> conditionPredicate) throws WTException;
+	public ListTasksResult listTasks(Collection<Integer> categoryIds, Condition<TaskQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
 	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds) throws WTException;
 	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
 	public Task getTask(int taskId) throws WTException;
