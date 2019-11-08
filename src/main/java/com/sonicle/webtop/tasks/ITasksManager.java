@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import org.joda.time.DateTime;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
+import java.util.Set;
 
 /**
  *
@@ -61,8 +62,8 @@ public interface ITasksManager {
 	
 	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
 	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
-	public List<Integer> listCategoryIds() throws WTException;
-	public List<Integer> listIncomingCategoryIds() throws WTException;
+	public Set<Integer> listCategoryIds() throws WTException;
+	public Set<Integer> listIncomingCategoryIds() throws WTException;
 	public Map<Integer, Category> listCategories() throws WTException;
 	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
