@@ -33,6 +33,7 @@
 package com.sonicle.webtop.tasks.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.rits.cloning.Cloner;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import org.apache.commons.lang3.StringUtils;
 
@@ -134,6 +135,22 @@ public class Category {
 	
 	public UserProfileId getProfileId() {
 		return new UserProfileId(getDomainId(), getUserId());
+	}
+	
+	public void setProfileId(UserProfileId pid) {
+		setDomainId(pid.getDomain());
+		setUserId(pid.getUser());
+	}
+	
+	public Category applyPropSet(CategoryPropSet propSet) {
+		if (propSet != null) {
+			Category clone = Cloner.standard().deepClone(this);
+			clone.setColor(propSet.getColorOrDefault(clone.getColor()));
+			clone.setSync(propSet.getSyncOrDefault(clone.getSync()));
+			return clone;
+		} else {
+			return this;
+		}
 	}
 	
 	public static String getHexColor(String color) {
