@@ -41,6 +41,10 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public class TasksUtils {
 	
+	public static String buildHref(String publicUid) {
+		return publicUid + ".ics";
+	}
+	
 	public static String buildTaskUid(int taskId, String internetName) {
 		String id = IdentifierUtils.getUUIDTimeBased(true) + "." + String.valueOf(taskId);
 		return DigestUtils.md5Hex(id) + "@" + internetName;
