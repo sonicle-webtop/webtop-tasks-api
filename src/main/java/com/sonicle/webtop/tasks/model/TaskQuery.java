@@ -38,6 +38,7 @@ import com.github.rutledgepaulv.qbuilders.properties.concrete.InstantProperty;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.time.DateTimeUtils;
 import com.sonicle.commons.web.json.bean.QueryObj;
+import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 
@@ -73,6 +74,10 @@ public class TaskQuery extends QBuilder<TaskQuery> {
 
 	public StringProperty<TaskQuery> any() {
 		return string("any");
+	}
+	
+	public StringProperty<TaskQuery> tag() {
+		return string("tag");
 	}
 
 	public static Condition<TaskQuery> toCondition(String pattern) {
@@ -114,8 +119,11 @@ public class TaskQuery extends QBuilder<TaskQuery> {
 							throw new UnsupportedOperationException(queryCondition.keyword + ":" + queryCondition.value);
 					}
 					break;
+				case "tag":
+					result = q.tag().eq(queryCondition.value);
+					break;
 				default:
-					throw new UnsupportedOperationException(queryCondition.keyword);
+					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
 			}
 		}
 

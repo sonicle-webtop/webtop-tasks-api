@@ -34,6 +34,8 @@ package com.sonicle.webtop.tasks.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import net.sf.qualitycheck.Check;
 
 /**
  *
@@ -43,6 +45,7 @@ public class Task extends BaseTask {
 	protected String description;
 	protected String href;
 	protected String etag;
+	protected Set<String> tags;
 	protected List<TaskAttachment> attachments = new ArrayList<>();
 	
 	public String getDescription() {
@@ -69,11 +72,41 @@ public class Task extends BaseTask {
 		this.etag = etag;
 	}
 	
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+	
+	public Task addTag(String tagId) {
+		if (tags != null) {
+			tags.add(Check.notNull(tagId, "tagId"));
+		}
+		return this;
+	}
+	
+	public Task removeTag(String tagId) {
+		if (tags != null) {
+			tags.remove(Check.notNull(tagId, "tagId"));
+		}
+		return this;
+	}
+	
 	public List<TaskAttachment> getAttachments() {
 		return attachments;
 	}
 
 	public void setAttachments(List<TaskAttachment> attachments) {
 		this.attachments = attachments;
+	}
+	
+	public boolean hasTags() {
+		return tags != null;
+	}
+	
+	public boolean hasAttachments() {
+		return attachments != null;
 	}
 }

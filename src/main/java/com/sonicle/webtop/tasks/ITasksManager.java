@@ -64,6 +64,7 @@ public interface ITasksManager {
 	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
 	public Set<Integer> listCategoryIds() throws WTException;
 	public Set<Integer> listIncomingCategoryIds() throws WTException;
+	public Set<Integer> listAllCategoryIds() throws WTException;
 	public Map<Integer, Category> listCategories() throws WTException;
 	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
@@ -85,12 +86,16 @@ public interface ITasksManager {
 	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds) throws WTException;
 	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
 	public Task getTask(int taskId) throws WTException;
+	public Task getTask(int taskId, boolean processAttachments, boolean processTags) throws WTException;
 	public TaskAttachmentWithBytes getTaskAttachment(int taskId, String attachmentId) throws WTException;
 	public Task addTask(Task task) throws WTException;
 	public void updateTask(Task task) throws WTException;
 	public void updateTask(Task task, boolean processAttachments) throws WTException;
 	public void deleteTask(int taskId) throws WTException;
-	public void deleteTask(ArrayList<Integer> taskIds) throws WTException;
-	public int deleteAllTasks(int categoryId) throws WTException;
+	public void deleteTask(Collection<Integer> taskIds) throws WTException;
 	public void moveTask(boolean copy, int taskId, int targetCategoryId) throws WTException;
+	public void moveTask(boolean copy, Collection<Integer> taskIds, int targetCategoryId) throws WTException;
+	public int deleteCategoryTasks(int categoryId) throws WTException;
+	public void updateTaskTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
+	public void updateTaskTags(final UpdateTagsOperation operation, final Collection<Integer> taskIds, final Set<String> tagIds) throws WTException;
 }
