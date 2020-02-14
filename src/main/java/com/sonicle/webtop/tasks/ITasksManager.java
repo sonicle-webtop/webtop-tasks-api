@@ -46,7 +46,6 @@ import com.sonicle.webtop.tasks.model.TaskLookup;
 import com.sonicle.webtop.tasks.model.TaskObject;
 import com.sonicle.webtop.tasks.model.TaskObjectChanged;
 import com.sonicle.webtop.tasks.model.TaskObjectWithICalendar;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +94,6 @@ public interface ITasksManager {
 	public void deleteTask(Collection<Integer> taskIds) throws WTException;
 	public void moveTask(boolean copy, int taskId, int targetCategoryId) throws WTException;
 	public void moveTask(boolean copy, Collection<Integer> taskIds, int targetCategoryId) throws WTException;
-	public int deleteCategoryTasks(int categoryId) throws WTException;
-	public void updateTaskTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
+	public void updateTaskCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public void updateTaskTags(final UpdateTagsOperation operation, final Collection<Integer> taskIds, final Set<String> tagIds) throws WTException;
 }
