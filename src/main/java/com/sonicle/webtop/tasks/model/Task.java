@@ -32,9 +32,14 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.sonicle.webtop.core.model.CustomFieldValue;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.sf.qualitycheck.Check;
 
 /**
@@ -47,6 +52,7 @@ public class Task extends BaseTask {
 	protected String etag;
 	protected Set<String> tags;
 	protected List<TaskAttachment> attachments = new ArrayList<>();
+	protected Map<String, CustomFieldValue> customValues = new LinkedHashMap<>();
 	
 	public String getDescription() {
 		return description;
@@ -102,11 +108,29 @@ public class Task extends BaseTask {
 		this.attachments = attachments;
 	}
 	
+	public Map<String, CustomFieldValue> getCustomValues() {
+		return customValues;
+	}
+	
+	public void setCustomValues(Map<String, CustomFieldValue> customValues) {
+		this.customValues = customValues;
+	}
+	
+	public void setCustomValues(Collection<CustomFieldValue> customValues) {
+		this.customValues = customValues.stream()
+				.filter(item -> item.getFieldId() != null)
+				.collect(Collectors.toMap(item -> item.getFieldId(), item -> item, (ov, nv) -> nv, LinkedHashMap::new));
+	}
+	
 	public boolean hasTags() {
 		return tags != null;
 	}
 	
 	public boolean hasAttachments() {
 		return attachments != null;
+	}
+	
+	public boolean hasCustomValues() {
+		return customValues != null;
 	}
 }

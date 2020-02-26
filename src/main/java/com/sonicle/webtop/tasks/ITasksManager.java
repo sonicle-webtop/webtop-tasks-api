@@ -85,7 +85,7 @@ public interface ITasksManager {
 	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds) throws WTException;
 	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
 	public Task getTask(int taskId) throws WTException;
-	public Task getTask(int taskId, boolean processAttachments, boolean processTags) throws WTException;
+	public Task getTask(int taskId, boolean processAttachments, boolean processTags, boolean processCustomValues) throws WTException;
 	public TaskAttachmentWithBytes getTaskAttachment(int taskId, String attachmentId) throws WTException;
 	public Task addTask(Task task) throws WTException;
 	public void updateTask(Task task) throws WTException;
