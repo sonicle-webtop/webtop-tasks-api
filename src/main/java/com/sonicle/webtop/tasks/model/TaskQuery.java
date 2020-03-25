@@ -32,13 +32,19 @@
  */
 package com.sonicle.webtop.tasks.model;
 
-import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
+import com.github.rutledgepaulv.qbuilders.properties.concrete.BooleanProperty;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.InstantProperty;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.commons.web.json.CompId;
 import com.sonicle.commons.web.json.bean.QueryObj;
+import com.sonicle.webtop.core.app.sdk.QBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
+import com.sonicle.webtop.core.model.CustomField;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 
@@ -46,7 +52,7 @@ import org.joda.time.DateTimeZone;
  *
  * @author Inis
  */
-public class TaskQuery extends QBuilder<TaskQuery> {
+public class TaskQuery extends QBuilderWithCValues<TaskQuery> {
 
 	public StringProperty<TaskQuery> subject() {
 		return string("subject");
@@ -64,12 +70,12 @@ public class TaskQuery extends QBuilder<TaskQuery> {
 		return instant("before");
 	}
 
-	public StringProperty<TaskQuery> isPrivate() {
-		return string("private");
+	public BooleanProperty<TaskQuery> isPrivate() {
+		return bool("private");
 	}
 
-	public StringProperty<TaskQuery> isDone() {
-		return string("done");
+	public BooleanProperty<TaskQuery> isDone() {
+		return bool("done");
 	}
 
 	public StringProperty<TaskQuery> any() {
@@ -87,51 +93,67 @@ public class TaskQuery extends QBuilder<TaskQuery> {
 			return null;
 		}
 	}
-
-	public static Condition<TaskQuery> toCondition(QueryObj query, DateTimeZone timezone) {
+	
+	public static Condition<TaskQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
 		Condition<TaskQuery> result = null;
-		for (QueryObj.Condition queryCondition : query.conditions) {
+		
+		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
 			TaskQuery q = (result == null) ? new TaskQuery() : result.and();
-			switch (queryCondition.keyword) {
-				case "subject":
-					result = q.subject().eq(queryCondition.value);
-					break;
-				case "description":
-					result = q.description().eq(queryCondition.value);
-					break;
-				case "after":
+			
+			ArrayList<Condition<TaskQuery>> cndts = new ArrayList<>();
+			for (QueryObj.Condition queryCondition : entry.getValue()) {
+				if ("subject".equals(queryCondition.keyword)) {
+					cndts.add(new TaskQuery().subject().eq(queryCondition.value));
+					
+				} else if ("description".equals(queryCondition.keyword)) {
+					cndts.add(new TaskQuery().description().eq(queryCondition.value));
+					
+				} else if ("after".equals(queryCondition.keyword)) {
 					String after = StringUtils.replace(queryCondition.value, "/", "-");
-					result = q.after().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(after), DateTimeUtils.toZoneId(timezone)));
-					break;
-				case "before":
+					cndts.add(new TaskQuery().after().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(after), DateTimeUtils.toZoneId(timezone))));
+					
+				} else if ("before".equals(queryCondition.keyword)) {
 					String before = StringUtils.replace(queryCondition.value, "/", "-");
-					result = q.before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone)));
-					break;
-				case "is":
+					cndts.add(new TaskQuery().before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone))));
+					
+				} else if ("is".equals(queryCondition.keyword)) {
 					switch (queryCondition.value) {
 						case "private":
-							result = q.isPrivate().eq("true");
+							cndts.add(new TaskQuery().isPrivate().isTrue());
 							break;
 						case "done":
-							result = q.isDone().eq("true");
+							cndts.add(new TaskQuery().isDone().isTrue());
 							break;
 						default:
 							throw new UnsupportedOperationException(queryCondition.keyword + ":" + queryCondition.value);
 					}
-					break;
-				case "tag":
-					result = q.tag().eq(queryCondition.value);
-					break;
-				default:
+					
+				} else if ("tag".equals(queryCondition.keyword)) {
+					cndts.add(new TaskQuery().tag().eq(queryCondition.value));
+					
+				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
+					Condition<TaskQuery> cond = null;
+					CompId cf = new CompId(2).parse(queryCondition.keyword, false);
+					if (!cf.isTokenEmpty(1)) {
+						String cfId = cf.getToken(1);
+						if (customFieldTypeMapping.containsKey(cfId)) {
+							cond = new TaskQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), queryCondition.value, queryCondition.negated, timezone);
+						}
+					}
+					if (cond != null) cndts.add(cond);					
+					
+				} else {
 					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
+				}
 			}
+			result = q.or(cndts);
 		}
-
+		
 		if (!StringUtils.isBlank(query.allText)) {
 			TaskQuery q = (result == null) ? new TaskQuery() : result.and();
 			result = q.any().eq(query.allText);
 		}
-
+		
 		return result;
 	}
 }
