@@ -39,7 +39,7 @@ import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.time.DateTimeUtils;
 import com.sonicle.commons.web.json.CompId;
 import com.sonicle.commons.web.json.bean.QueryObj;
-import com.sonicle.webtop.core.app.sdk.QBuilderWithCValues;
+import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import com.sonicle.webtop.core.model.CustomField;
 import java.util.ArrayList;
@@ -52,7 +52,11 @@ import org.joda.time.DateTimeZone;
  *
  * @author Inis
  */
-public class TaskQuery extends QBuilderWithCValues<TaskQuery> {
+public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
+
+	public TaskQuery() {
+		super(true);
+	}
 
 	public StringProperty<TaskQuery> subject() {
 		return string("subject");
@@ -103,10 +107,10 @@ public class TaskQuery extends QBuilderWithCValues<TaskQuery> {
 			ArrayList<Condition<TaskQuery>> cndts = new ArrayList<>();
 			for (QueryObj.Condition queryCondition : entry.getValue()) {
 				if ("subject".equals(queryCondition.keyword)) {
-					cndts.add(new TaskQuery().subject().eq(queryCondition.value));
+					cndts.add(new TaskQuery().subject().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("description".equals(queryCondition.keyword)) {
-					cndts.add(new TaskQuery().description().eq(queryCondition.value));
+					cndts.add(new TaskQuery().description().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("after".equals(queryCondition.keyword)) {
 					String after = StringUtils.replace(queryCondition.value, "/", "-");
@@ -151,7 +155,7 @@ public class TaskQuery extends QBuilderWithCValues<TaskQuery> {
 		
 		if (!StringUtils.isBlank(query.allText)) {
 			TaskQuery q = (result == null) ? new TaskQuery() : result.and();
-			result = q.any().eq(query.allText);
+			result = q.any().eq(q.prepareStringValue(query.allText));
 		}
 		
 		return result;
