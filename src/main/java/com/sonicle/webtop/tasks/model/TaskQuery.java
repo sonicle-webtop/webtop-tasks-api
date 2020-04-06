@@ -107,10 +107,10 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 			ArrayList<Condition<TaskQuery>> cndts = new ArrayList<>();
 			for (QueryObj.Condition queryCondition : entry.getValue()) {
 				if ("subject".equals(queryCondition.keyword)) {
-					cndts.add(new TaskQuery().subject().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new TaskQuery().subject().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("description".equals(queryCondition.keyword)) {
-					cndts.add(new TaskQuery().description().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new TaskQuery().description().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("after".equals(queryCondition.keyword)) {
 					String after = StringUtils.replace(queryCondition.value, "/", "-");
@@ -155,7 +155,7 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 		
 		if (!StringUtils.isBlank(query.allText)) {
 			TaskQuery q = (result == null) ? new TaskQuery() : result.and();
-			result = q.any().eq(q.prepareStringValue(query.allText));
+			result = q.any().eq(q.asSmartStringValue(query.allText));
 		}
 		
 		return result;
