@@ -50,7 +50,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.joda.time.DateTime;
-import com.github.rutledgepaulv.qbuilders.conditions.Condition;
+import com.sonicle.commons.qbuilders.conditions.Condition;
 import java.util.Set;
 
 /**
