@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sonicle S.r.l.
+ * Copyright (C) 2021 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,22 +28,36 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2019 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.tasks.model;
+package com.sonicle.webtop.tasks.io;
+
+import com.sonicle.webtop.core.util.ICalendarUtils;
+import com.sonicle.webtop.tasks.model.TaskBase;
+import com.sonicle.webtop.tasks.model.TaskRecurrence;
+import java.util.Set;
+import net.fortuna.ical4j.model.PropertyList;
 
 /**
  *
  * @author malbinola
  */
-public class TaskObjectWithBean extends TaskObject {
-	protected TaskEx task;
-	
-	public TaskEx getTask() {
-		return task;
-	}
+public class TaskInput {
+	public final TaskBase task;
+	public final TaskRecurrence taskRecurrence;
+	public final ICalendarUtils.RecurringRefs recurringRefs;
+	public final Set<String> tagNames;
+	public final String relatedToUid;
+	public final PropertyList extraProps;
+	public final Object sourceObject;
 
-	public void setTask(TaskEx task) {
+	public TaskInput(TaskBase task, TaskRecurrence taskRecurrence, ICalendarUtils.RecurringRefs recurringRefs, Set<String> tagNames, String relatedToUid, PropertyList extraProps, Object sourceObject) {
 		this.task = task;
+		this.taskRecurrence = taskRecurrence;
+		this.recurringRefs = recurringRefs;
+		this.tagNames = tagNames;
+		this.relatedToUid = relatedToUid;
+		this.extraProps = extraProps;
+		this.sourceObject = sourceObject;
 	}
 }

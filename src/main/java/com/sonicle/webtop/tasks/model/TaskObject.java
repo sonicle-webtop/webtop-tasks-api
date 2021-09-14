@@ -39,18 +39,19 @@ import org.joda.time.DateTime;
  * @author malbinola
  */
 public class TaskObject {
-	protected Integer taskId;
+	protected String taskId;
 	protected Integer categoryId;
-	protected Task.RevisionStatus revisionStatus;
+	protected TaskBase.RevisionStatus revisionStatus;
 	protected DateTime revisionTimestamp;
 	protected String publicUid;
 	protected String href;
+	protected String objectName;
 
-	public Integer getTaskId() {
+	public String getTaskId() {
 		return taskId;
 	}
 
-	public void setTaskId(Integer taskId) {
+	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
 
@@ -92,5 +93,13 @@ public class TaskObject {
 
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	public String getObjectName() {
+		return objectName;
+	}
+
+	public void setObjectName(String objectName) {
+		this.objectName = objectName;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sonicle S.r.l.
+ * Copyright (C) 2021 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,22 +28,61 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2019 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.model;
+
+import com.sonicle.webtop.core.util.ICal4jUtils;
+import java.util.Set;
+import net.fortuna.ical4j.model.Recur;
+import net.sf.qualitycheck.Check;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 /**
  *
  * @author malbinola
  */
-public class TaskObjectWithBean extends TaskObject {
-	protected TaskEx task;
+public class TaskRecurrence {
+	protected String rule;
+	protected DateTime start;
+	protected Set<LocalDate> excludedDates;
 	
-	public TaskEx getTask() {
-		return task;
+	public TaskRecurrence(String rule, DateTime start, Set<LocalDate> excludedDates) {
+		this(rule, start);
+		this.excludedDates = excludedDates;
+	}
+	
+	public TaskRecurrence(String rule, DateTime start) {
+		this.rule = Check.notNull(rule, "rule");
+		this.start = Check.notNull(start, "start");
 	}
 
-	public void setTask(TaskEx task) {
-		this.task = task;
+	public String getRule() {
+		return rule;
+	}
+
+	public void setRule(String rule) {
+		this.rule = Check.notNull(rule, "rule");
+	}
+
+	public DateTime getStart() {
+		return start;
+	}
+
+	public void setStart(DateTime start) {
+		this.start = Check.notNull(start, "start");
+	}
+
+	public Set<LocalDate> getExcludedDates() {
+		return excludedDates;
+	}
+
+	public void setExcludedDates(Set<LocalDate> excludedDates) {
+		this.excludedDates = excludedDates;
+	}
+	
+	public Recur getRuleRecur() {
+		return ICal4jUtils.parseRRule(getRule());
 	}
 }

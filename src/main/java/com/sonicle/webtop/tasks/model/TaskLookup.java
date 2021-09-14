@@ -38,12 +38,22 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
  *
  * @author malbinola
  */
-public class TaskLookup extends BaseTask {
+public class TaskLookup extends TaskBase {
+	protected TaskInstanceId parentInstanceId;
 	protected String tags;
+	protected Boolean hasRecurrence;
+	protected Boolean hasChildren;
 	protected String categoryName;
 	protected String categoryDomainId;
 	protected String categoryUserId;
-	protected String description;
+	
+	public TaskInstanceId getParentInstanceId() {
+		return parentInstanceId;
+	}
+
+	public void setParentInstanceId(TaskInstanceId parentInstanceId) {
+		this.parentInstanceId = parentInstanceId;
+	}
 	
 	public String getTags() {
 		return tags;
@@ -51,6 +61,22 @@ public class TaskLookup extends BaseTask {
 
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+	
+	public Boolean getHasRecurrence() {
+		return hasRecurrence;
+	}
+
+	public void setHasRecurrence(Boolean hasRecurrence) {
+		this.hasRecurrence = hasRecurrence;
+	}
+	
+	public Boolean getHasChildren() {
+		return hasChildren;
+	}
+
+	public void setHasChildren(Boolean hasChildren) {
+		this.hasChildren = hasChildren;
 	}
 	
 	public String getCategoryName() {
@@ -81,11 +107,11 @@ public class TaskLookup extends BaseTask {
 		return new UserProfileId(getCategoryDomainId(), getCategoryUserId());
 	}
 	
-	public String getDescription() {
-		return description;
+	public boolean isParent() {
+		return hasChildren;
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	
+	public boolean isChild() {
+		return getParentInstanceId() != null;
 	}
 }

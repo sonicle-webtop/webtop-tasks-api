@@ -32,6 +32,9 @@
  */
 package com.sonicle.webtop.tasks;
 
+import com.google.gson.annotations.SerializedName;
+import com.sonicle.commons.BitFlag;
+import com.sonicle.commons.BitFlagEnum;
 import com.sonicle.webtop.tasks.model.TaskQuery;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.WTException;
@@ -39,10 +42,8 @@ import com.sonicle.webtop.tasks.model.Category;
 import com.sonicle.webtop.tasks.model.ShareFolderCategory;
 import com.sonicle.webtop.tasks.model.CategoryPropSet;
 import com.sonicle.webtop.tasks.model.ShareRootCategory;
-import com.sonicle.webtop.tasks.model.ListTasksResult;
 import com.sonicle.webtop.tasks.model.Task;
 import com.sonicle.webtop.tasks.model.TaskAttachmentWithBytes;
-import com.sonicle.webtop.tasks.model.TaskLookup;
 import com.sonicle.webtop.tasks.model.TaskObject;
 import com.sonicle.webtop.tasks.model.TaskObjectChanged;
 import com.sonicle.webtop.tasks.model.TaskObjectWithICalendar;
@@ -51,8 +52,16 @@ import java.util.List;
 import java.util.Map;
 import org.joda.time.DateTime;
 import com.sonicle.commons.qbuilders.conditions.Condition;
+import com.sonicle.commons.beans.SortInfo;
+import com.sonicle.commons.time.InstantRange;
 import com.sonicle.webtop.core.model.CustomFieldValue;
+import com.sonicle.webtop.core.sdk.UserProfileId;
+import com.sonicle.webtop.tasks.model.TaskEx;
+import com.sonicle.webtop.tasks.model.TaskInstance;
+import com.sonicle.webtop.tasks.model.TaskInstanceId;
+import com.sonicle.webtop.tasks.model.TaskLookupInstance;
 import java.util.Set;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -62,11 +71,16 @@ public interface ITasksManager {
 	
 	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
 	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
-	public Set<Integer> listCategoryIds() throws WTException;
+	public Set<Integer> listMyCategoryIds() throws WTException;
 	public Set<Integer> listIncomingCategoryIds() throws WTException;
+	public Set<Integer> listIncomingCategoryIds(final UserProfileId owner) throws WTException;
 	public Set<Integer> listAllCategoryIds() throws WTException;
-	public Map<Integer, Category> listCategories() throws WTException;
+	public Map<Integer, Category> listMyCategories() throws WTException;
+	public Map<Integer, Category> listIncomingCategories() throws WTException;
+	public Map<Integer, Category> listIncomingCategories(final UserProfileId owner) throws WTException;
 	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
+	public Integer getDefaultCategoryId() throws WTException;
+	public Integer getBuiltInCategoryId() throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;
 	public Category addCategory(Category cat) throws WTException;
@@ -80,22 +94,57 @@ public interface ITasksManager {
 	public LangUtils.CollectionChangeSet<TaskObjectChanged> listTaskObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
 	public TaskObjectWithICalendar getTaskObjectWithICalendar(int categoryId, String href) throws WTException;
 	public List<TaskObjectWithICalendar> getTaskObjectsWithICalendar(int categoryId, Collection<String> hrefs) throws WTException;
-	public TaskObject getTaskObject(int categoryId, int taskId, TaskObjectOutputType outputType) throws WTException;
-	public ListTasksResult listTasks(Collection<Integer> categoryIds, Condition<TaskQuery> conditionPredicate) throws WTException;
-	public ListTasksResult listTasks(Collection<Integer> categoryIds, Condition<TaskQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
-	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds) throws WTException;
-	public List<TaskLookup> listUpcomingTasks(Collection<Integer> categoryIds, String pattern) throws WTException;
-	public Task getTask(int taskId) throws WTException;
-	public Task getTask(int taskId, boolean processAttachments, boolean processTags, boolean processCustomValues) throws WTException;
-	public TaskAttachmentWithBytes getTaskAttachment(int taskId, String attachmentId) throws WTException;
-	public Map<String, CustomFieldValue> getTaskCustomValues(int taskId) throws WTException;
-	public Task addTask(Task task) throws WTException;
-	public void updateTask(Task task) throws WTException;
-	public void updateTask(Task task, boolean processAttachments) throws WTException;
-	public void deleteTask(int taskId) throws WTException;
-	public void deleteTask(Collection<Integer> taskIds) throws WTException;
-	public void moveTask(boolean copy, int taskId, int targetCategoryId) throws WTException;
-	public void moveTask(boolean copy, Collection<Integer> taskIds, int targetCategoryId) throws WTException;
+	public TaskObject getTaskObject(final TaskInstanceId instanceId, final TaskObjectOutputType outputType) throws WTException;
+	public Task addTask(final TaskEx task) throws WTException;
+	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final DateTimeZone targetTimezone) throws WTException;
+	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
+	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final InstantRange viewRange, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
+	public TaskInstance getTaskInstance(final TaskInstanceId instanceId) throws WTException;
+	public TaskInstance getTaskInstance(final TaskInstanceId instanceId, final BitFlag<TaskGetOptions> options) throws WTException;
+	public TaskAttachmentWithBytes getTaskInstanceAttachment(final TaskInstanceId instanceId, final String attachmentId) throws WTException;
+	public Map<String, CustomFieldValue> getTaskInstanceCustomValues(final TaskInstanceId instanceId) throws WTException;
+	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task) throws WTException;
+	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task, final BitFlag<TaskUpdateOptions> options) throws WTException;
+	public void updateQuickTaskInstance(final TaskInstanceId instanceId, final Boolean completed, final Short progress, final Short importance) throws WTException;
+	public void updateQuickTaskInstance(final Collection<TaskInstanceId> instanceIds, final Boolean completed, final Short progress, final Short importance) throws WTException;
+	public void deleteTaskInstance(final TaskInstanceId instanceId) throws WTException;
+	public void deleteTaskInstance(final Collection<TaskInstanceId> instanceIds) throws WTException;
+	public void moveTaskInstance(final boolean copy, final TaskInstanceId instanceId, final int targetCategoryId) throws WTException;
+	public void moveTaskInstance(final boolean copy, final Collection<TaskInstanceId> instanceIds, final int targetCategoryId) throws WTException;
+	public void updateTaskInstanceTags(final UpdateTagsOperation operation, final Collection<TaskInstanceId> instanceIds, final Set<String> tagIds) throws WTException;
 	public void updateTaskCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
-	public void updateTaskTags(final UpdateTagsOperation operation, final Collection<Integer> taskIds, final Set<String> tagIds) throws WTException;
+	
+	public static enum TaskListView {
+		@SerializedName("all") ALL,
+		@SerializedName("today") TODAY,
+		@SerializedName("next7") NEXT_7,
+		@SerializedName("notStarted") NOT_STARTED,
+		@SerializedName("late") LATE,
+		@SerializedName("completed") COMPLETED,
+		@SerializedName("notCompleted") NOT_COMPLETED,
+		@SerializedName("upcoming") UPCOMING
+	}
+	
+	public static enum ImportMode {
+		@SerializedName("copy") COPY,
+		@SerializedName("append") APPEND
+	}
+	
+	public static enum TaskGetOptions implements BitFlagEnum {
+		ATTACHMENTS(1), TAGS(2), CUSTOM_VALUES(4);
+		
+		private int value = 0;
+		private TaskGetOptions(int value) { this.value = value; }
+		@Override
+		public int value() { return this.value; }
+	}
+	
+	public static enum TaskUpdateOptions implements BitFlagEnum {
+		ASSIGNEES(1), ATTACHMENTS(2), TAGS(4), CUSTOM_VALUES(8), CONTACT_REF(16), DOCUMENT_REF(32);
+		
+		private int value = 0;
+		private TaskUpdateOptions(int value) { this.value = value; }
+		@Override
+		public int value() { return this.value; }
+	}
 }

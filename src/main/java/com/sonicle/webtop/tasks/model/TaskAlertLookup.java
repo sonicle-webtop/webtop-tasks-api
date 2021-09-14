@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sonicle S.r.l.
+ * Copyright (C) 2021 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,22 +28,65 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2019 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.model;
+
+import com.sonicle.webtop.core.sdk.UserProfileId;
+import org.joda.time.DateTime;
 
 /**
  *
  * @author malbinola
  */
-public class TaskObjectWithBean extends TaskObject {
-	protected TaskEx task;
+public class TaskAlertLookup extends TaskBase {
+	protected DateTime remindedOn;
+	protected Boolean hasRecurrence;
+	protected String categoryName;
+	protected String categoryDomainId;
+	protected String categoryUserId;
 	
-	public TaskEx getTask() {
-		return task;
+	public DateTime getRemindedOn() {
+		return remindedOn;
 	}
 
-	public void setTask(TaskEx task) {
-		this.task = task;
+	public void setRemindedOn(DateTime remindedOn) {
+		this.remindedOn = remindedOn;
+	}
+	
+	public Boolean getHasRecurrence() {
+		return hasRecurrence;
+	}
+
+	public void setHasRecurrence(Boolean hasRecurrence) {
+		this.hasRecurrence = hasRecurrence;
+	}
+	
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getCategoryDomainId() {
+		return categoryDomainId;
+	}
+
+	public void setCategoryDomainId(String categoryDomainId) {
+		this.categoryDomainId = categoryDomainId;
+	}
+
+	public String getCategoryUserId() {
+		return categoryUserId;
+	}
+
+	public void setCategoryUserId(String categoryUserId) {
+		this.categoryUserId = categoryUserId;
+	}
+	
+	public UserProfileId getCategoryProfileId() {
+		return new UserProfileId(getCategoryDomainId(), getCategoryUserId());
 	}
 }

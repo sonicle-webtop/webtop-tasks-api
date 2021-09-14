@@ -34,6 +34,7 @@ package com.sonicle.webtop.tasks;
 
 import com.sonicle.commons.IdentifierUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -45,8 +46,26 @@ public class TasksUtils {
 		return publicUid + ".ics";
 	}
 	
+	public static String buildTaskUid(String taskId, String internetName) {
+		return DigestUtils.md5Hex(taskId) + "@" + internetName;
+	}
+	
 	public static String buildTaskUid(int taskId, String internetName) {
 		String id = IdentifierUtils.getUUIDTimeBased(true) + "." + String.valueOf(taskId);
 		return DigestUtils.md5Hex(id) + "@" + internetName;
+	}
+	
+	public static boolean isTaskSeriesMaster(ITaskInstanceStatable task) {
+		String iid = task.getId().toString();
+		return StringUtils.startsWith(iid, task.getTaskId()) && StringUtils.endsWith(iid, ".00000000") && task.getHasRecurrence();
+	}
+	
+	public static boolean isTaskSeriesItem(ITaskInstanceStatable task) {
+		return !isTaskSeriesMaster(task) && !isTaskSeriesBroken(task) && !StringUtils.endsWith(task.getId().toString(), ".00000000");
+	}
+	
+	public static boolean isTaskSeriesBroken(ITaskInstanceStatable task) {
+		String iid = task.getId().toString();
+		return !StringUtils.startsWith(iid, task.getTaskId()) && !StringUtils.endsWith(iid, ".00000000");
 	}
 }

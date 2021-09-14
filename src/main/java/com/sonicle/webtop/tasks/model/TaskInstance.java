@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sonicle S.r.l.
+ * Copyright (C) 2021 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,22 +28,72 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2019 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.model;
+
+import com.rits.cloning.Cloner;
+import com.sonicle.webtop.tasks.ITaskInstanceStatable;
 
 /**
  *
  * @author malbinola
  */
-public class TaskObjectWithBean extends TaskObject {
-	protected TaskEx task;
+public class TaskInstance extends TaskEx implements ITaskInstanceStatable {
+	protected TaskInstanceId id;
+	protected String taskId;
+	protected Integer childrenTotalCount;
+	protected Integer childrenCompletedCount;
 	
-	public TaskEx getTask() {
-		return task;
+	public TaskInstance() {
+		super();
+	}
+	
+	/*
+	public TaskInstance(Task task) {
+		super();
+		this.id = TaskInstanceId.build(task.getTaskId(), task.getSeriesTaskId(), task.getSeriesInstanceId());
+		Cloner.standard().copyPropertiesOfInheritedClass(task, this);
+	}
+	*/
+	
+	public TaskInstance(TaskInstanceId id, Task task) {
+		super();
+		this.id = id;
+		this.taskId = task.getTaskId();
+		this.childrenTotalCount = task.getChildrenTotalCount();
+		this.childrenCompletedCount = task.getChildrenCompletedCount();
+		Cloner.standard().copyPropertiesOfInheritedClass(task, this);
+	}
+	
+	@Override
+	public TaskInstanceId getId() {
+		return id;
 	}
 
-	public void setTask(TaskEx task) {
-		this.task = task;
+	public void setId(TaskInstanceId id) {
+		this.id = id;
+	}
+	
+	@Override
+	public String getTaskId() {
+		return taskId;
+	}
+	
+	public Integer getChildrenTotalCount() {
+		return childrenTotalCount;
+	}
+	
+	public Integer getChildrenCompletedCount() {
+		return childrenCompletedCount;
+	}
+	
+	public boolean isParent() {
+		return childrenTotalCount != null && childrenTotalCount > 0;
+	}
+	
+	@Override
+	public Boolean getHasRecurrence() {
+		return getRecurrence() != null;
 	}
 }

@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.sonicle.commons.EnumUtils;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.qbuilders.properties.concrete.BooleanProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.InstantProperty;
@@ -56,6 +57,10 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 	public StringProperty<TaskQuery> subject() {
 		return string("subject");
 	}
+	
+	public StringProperty<TaskQuery> location() {
+		return string("location");
+	}
 
 	public StringProperty<TaskQuery> description() {
 		return string("description");
@@ -72,9 +77,27 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 	public BooleanProperty<TaskQuery> isPrivate() {
 		return bool("private");
 	}
-
+	
+	public StringProperty<TaskQuery> status() {
+		return string("status");
+	}
+	
 	public BooleanProperty<TaskQuery> isDone() {
 		return bool("done");
+	}
+	
+	/*
+	public BooleanProperty<TaskQuery> isStarted() {
+		return bool("started");
+	}
+	
+	public BooleanProperty<TaskQuery> isLate() {
+		return bool("late");
+	}
+	*/
+	
+	public StringProperty<TaskQuery> document() {
+		return string("document");
 	}
 
 	public StringProperty<TaskQuery> any() {
@@ -83,6 +106,10 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 	
 	public StringProperty<TaskQuery> tag() {
 		return string("tag");
+	}
+	
+	public StringProperty<TaskQuery> parent() {
+		return string("parent");
 	}
 
 	public static Condition<TaskQuery> toCondition(String pattern) {
@@ -108,6 +135,9 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 				if ("subject".equals(queryCondition.keyword)) {
 					last = q.subject().eq(asStringValue(queryCondition.value, smartStringComparison));
 					
+				} else if ("location".equals(queryCondition.keyword)) {
+					last = q.location().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
 				} else if ("description".equals(queryCondition.keyword)) {
 					last = q.description().eq(asStringValue(queryCondition.value, smartStringComparison));
 					
@@ -119,13 +149,27 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 					String before = StringUtils.replace(queryCondition.value, "/", "-");
 					last = q.before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone)));
 					
+				} else if ("status".equals(queryCondition.keyword)) {
+					if (EnumUtils.forSerializedName(queryCondition.value, TaskBase.Status.class)== null) {
+						throw new UnsupportedOperationException(queryCondition.keyword + ":" + queryCondition.value);
+					}
+					last = q.status().eq(queryCondition.value);
+					
 				} else if ("is".equals(queryCondition.keyword)) {
 					switch (queryCondition.value) {
 						case "private":
-							last = q.isPrivate().isTrue();
+							if (queryCondition.negated) {
+								last = q.isPrivate().isFalse();
+							} else {
+								last = q.isPrivate().isTrue();
+							}
 							break;
 						case "done":
-							last = q.isDone().isTrue();
+							if (queryCondition.negated) {
+								last = q.isDone().isFalse();
+							} else {
+								last = q.isDone().isTrue();
+							}
 							break;
 						default:
 							throw new UnsupportedOperationException(queryCondition.keyword + ":" + queryCondition.value);
@@ -133,6 +177,12 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 					
 				} else if ("tag".equals(queryCondition.keyword)) {
 					last = q.tag().eq(queryCondition.value);
+				
+				} else if ("parent".equals(queryCondition.keyword)) {
+					last = q.parent().eq(queryCondition.value);
+					
+				} else if ("doc".equals(queryCondition.keyword)) {
+					last = q.document().eq(asStringValue(queryCondition.value, smartStringComparison));
 					
 				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
 					CId cf = new CId(queryCondition.keyword, 2);

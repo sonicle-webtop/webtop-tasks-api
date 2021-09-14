@@ -32,105 +32,56 @@
  */
 package com.sonicle.webtop.tasks.model;
 
-import com.sonicle.webtop.core.model.CustomFieldValue;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import net.sf.qualitycheck.Check;
-
 /**
  *
  * @author malbinola
  */
-public class Task extends BaseTask {
-	protected String description;
-	protected String href;
-	protected String etag;
-	protected Set<String> tags;
-	protected List<TaskAttachment> attachments = new ArrayList<>();
-	protected Map<String, CustomFieldValue> customValues = new LinkedHashMap<>();
+public class Task extends TaskEx {
+	protected String taskId;
+	protected String seriesTaskId;
+	protected String seriesInstanceId;
+	protected Integer childrenTotalCount;
+	protected Integer childrenCompletedCount;
 	
-	public String getDescription() {
-		return description;
+	public Task(Integer childrenTotalCount, Integer childrenCompletedCount) {
+		super();
+		this.childrenTotalCount = childrenTotalCount;
+		this.childrenCompletedCount = childrenCompletedCount;
+	}
+	
+	public String getTaskId() {
+		return taskId;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public String getHref() {
-		return href;
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 
-	public void setHref(String href) {
-		this.href = href;
+	public String getSeriesTaskId() {
+		return seriesTaskId;
 	}
 
-	public String getEtag() {
-		return etag;
+	public void setSeriesTaskId(String seriesTaskId) {
+		this.seriesTaskId = seriesTaskId;
+	}
+	
+	public String getSeriesInstanceId() {
+		return seriesInstanceId;
 	}
 
-	public void setEtag(String etag) {
-		this.etag = etag;
+	public void setSeriesInstanceId(String seriesInstanceId) {
+		this.seriesInstanceId = seriesInstanceId;
 	}
 	
-	public Set<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<String> tags) {
-		this.tags = tags;
+	public Integer getChildrenTotalCount() {
+		return childrenTotalCount;
 	}
 	
-	public Task addTag(String tagId) {
-		if (tags != null) {
-			tags.add(Check.notNull(tagId, "tagId"));
-		}
-		return this;
+	public Integer getChildrenCompletedCount() {
+		return childrenCompletedCount;
 	}
 	
-	public Task removeTag(String tagId) {
-		if (tags != null) {
-			tags.remove(Check.notNull(tagId, "tagId"));
-		}
-		return this;
-	}
-	
-	public List<TaskAttachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<TaskAttachment> attachments) {
-		this.attachments = attachments;
-	}
-	
-	public Map<String, CustomFieldValue> getCustomValues() {
-		return customValues;
-	}
-	
-	public void setCustomValues(Map<String, CustomFieldValue> customValues) {
-		this.customValues = customValues;
-	}
-	
-	public void setCustomValues(Collection<CustomFieldValue> customValues) {
-		this.customValues = customValues.stream()
-				.filter(item -> item.getFieldId() != null)
-				.collect(Collectors.toMap(item -> item.getFieldId(), item -> item, (ov, nv) -> nv, LinkedHashMap::new));
-	}
-	
-	public boolean hasTags() {
-		return tags != null;
-	}
-	
-	public boolean hasAttachments() {
-		return attachments != null;
-	}
-	
-	public boolean hasCustomValues() {
-		return customValues != null;
+	public boolean isParent() {
+		return childrenTotalCount != null && childrenTotalCount > 0;
 	}
 }

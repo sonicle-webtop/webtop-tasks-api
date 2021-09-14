@@ -51,7 +51,6 @@ public class Category {
 	private String color;
 	private Sync sync;
 	private Boolean isPrivate;
-	private Boolean isDefault;
 
 	public Integer getCategoryId() {
 		return categoryId;
@@ -124,14 +123,6 @@ public class Category {
 	public void setIsPrivate(Boolean isPrivate) {
 		this.isPrivate = isPrivate;
 	}
-
-	public Boolean getIsDefault() {
-		return isDefault;
-	}
-
-	public void setIsDefault(Boolean isDefault) {
-		this.isDefault = isDefault;
-	}
 	
 	public UserProfileId getProfileId() {
 		return new UserProfileId(getDomainId(), getUserId());
@@ -154,7 +145,7 @@ public class Category {
 	}
 	
 	public static String getHexColor(String color) {
-		return (StringUtils.indexOf(color, "#") == 0) ? StringUtils.substring(color, 1) : color;
+		return StringUtils.upperCase((StringUtils.indexOf(color, "#") == 0) ? StringUtils.substring(color, 1) : color);
 	}
 	
 	public static enum Sync {
