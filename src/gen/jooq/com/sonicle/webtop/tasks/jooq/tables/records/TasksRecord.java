@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables.records;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TasksRecord extends org.jooq.impl.UpdatableRecordImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord> {
 
-	private static final long serialVersionUID = -1437636310;
+	private static final long serialVersionUID = 1025072000;
 
 	/**
 	 * Setter for <code>tasks.tasks.task_id</code>.
@@ -355,128 +355,128 @@ public class TasksRecord extends org.jooq.impl.UpdatableRecordImpl<com.sonicle.w
 	}
 
 	/**
-	 * Setter for <code>tasks.tasks.href</code>.
-	 */
-	public void setHref(java.lang.String value) {
-		setValue(24, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.href</code>.
-	 */
-	public java.lang.String getHref() {
-		return (java.lang.String) getValue(24);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.etag</code>.
-	 */
-	public void setEtag(java.lang.String value) {
-		setValue(25, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.etag</code>.
-	 */
-	public java.lang.String getEtag() {
-		return (java.lang.String) getValue(25);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.reminder</code>.
-	 */
-	public void setReminder(java.lang.Integer value) {
-		setValue(26, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.reminder</code>.
-	 */
-	public java.lang.Integer getReminder() {
-		return (java.lang.Integer) getValue(26);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.reminded_on</code>.
-	 */
-	public void setRemindedOn(org.joda.time.DateTime value) {
-		setValue(27, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.reminded_on</code>.
-	 */
-	public org.joda.time.DateTime getRemindedOn() {
-		return (org.joda.time.DateTime) getValue(27);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.contact</code>.
-	 */
-	public void setContact(java.lang.String value) {
-		setValue(28, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.contact</code>.
-	 */
-	public java.lang.String getContact() {
-		return (java.lang.String) getValue(28);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.contact_id</code>.
-	 */
-	public void setContactId(java.lang.String value) {
-		setValue(29, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.contact_id</code>.
-	 */
-	public java.lang.String getContactId() {
-		return (java.lang.String) getValue(29);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.company</code>.
-	 */
-	public void setCompany(java.lang.String value) {
-		setValue(30, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.company</code>.
-	 */
-	public java.lang.String getCompany() {
-		return (java.lang.String) getValue(30);
-	}
-
-	/**
-	 * Setter for <code>tasks.tasks.company_id</code>.
-	 */
-	public void setCompanyId(java.lang.String value) {
-		setValue(31, value);
-	}
-
-	/**
-	 * Getter for <code>tasks.tasks.company_id</code>.
-	 */
-	public java.lang.String getCompanyId() {
-		return (java.lang.String) getValue(31);
-	}
-
-	/**
 	 * Setter for <code>tasks.tasks.document_ref</code>.
 	 */
 	public void setDocumentRef(java.lang.String value) {
-		setValue(32, value);
+		setValue(24, value);
 	}
 
 	/**
 	 * Getter for <code>tasks.tasks.document_ref</code>.
 	 */
 	public java.lang.String getDocumentRef() {
+		return (java.lang.String) getValue(24);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.href</code>.
+	 */
+	public void setHref(java.lang.String value) {
+		setValue(25, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.href</code>.
+	 */
+	public java.lang.String getHref() {
+		return (java.lang.String) getValue(25);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.etag</code>.
+	 */
+	public void setEtag(java.lang.String value) {
+		setValue(26, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.etag</code>.
+	 */
+	public java.lang.String getEtag() {
+		return (java.lang.String) getValue(26);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.reminder</code>.
+	 */
+	public void setReminder(java.lang.Integer value) {
+		setValue(27, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.reminder</code>.
+	 */
+	public java.lang.Integer getReminder() {
+		return (java.lang.Integer) getValue(27);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.reminded_on</code>.
+	 */
+	public void setRemindedOn(org.joda.time.DateTime value) {
+		setValue(28, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.reminded_on</code>.
+	 */
+	public org.joda.time.DateTime getRemindedOn() {
+		return (org.joda.time.DateTime) getValue(28);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.contact</code>.
+	 */
+	public void setContact(java.lang.String value) {
+		setValue(29, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.contact</code>.
+	 */
+	public java.lang.String getContact() {
+		return (java.lang.String) getValue(29);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.contact_id</code>.
+	 */
+	public void setContactId(java.lang.String value) {
+		setValue(30, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.contact_id</code>.
+	 */
+	public java.lang.String getContactId() {
+		return (java.lang.String) getValue(30);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.company</code>.
+	 */
+	public void setCompany(java.lang.String value) {
+		setValue(31, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.company</code>.
+	 */
+	public java.lang.String getCompany() {
+		return (java.lang.String) getValue(31);
+	}
+
+	/**
+	 * Setter for <code>tasks.tasks.company_id</code>.
+	 */
+	public void setCompanyId(java.lang.String value) {
+		setValue(32, value);
+	}
+
+	/**
+	 * Getter for <code>tasks.tasks.company_id</code>.
+	 */
+	public java.lang.String getCompanyId() {
 		return (java.lang.String) getValue(32);
 	}
 
@@ -506,7 +506,7 @@ public class TasksRecord extends org.jooq.impl.UpdatableRecordImpl<com.sonicle.w
 	/**
 	 * Create a detached, initialised TasksRecord
 	 */
-	public TasksRecord(java.lang.String taskId, java.lang.Integer categoryId, java.lang.String seriesTaskId, java.lang.String seriesInstanceId, java.lang.String parentTaskId, java.lang.String publicUid, java.lang.String revisionStatus, org.joda.time.DateTime revisionTimestamp, java.lang.Integer revisionSequence, org.joda.time.DateTime creationTimestamp, java.lang.String organizer, java.lang.String organizerId, java.lang.String subject, java.lang.String location, java.lang.String descriptionType, java.lang.String description, java.lang.String timezone, org.joda.time.DateTime start, org.joda.time.DateTime due, org.joda.time.DateTime completedOn, java.lang.Short progress, java.lang.String status, java.lang.Short importance, java.lang.Boolean isPrivate, java.lang.String href, java.lang.String etag, java.lang.Integer reminder, org.joda.time.DateTime remindedOn, java.lang.String contact, java.lang.String contactId, java.lang.String company, java.lang.String companyId, java.lang.String documentRef) {
+	public TasksRecord(java.lang.String taskId, java.lang.Integer categoryId, java.lang.String seriesTaskId, java.lang.String seriesInstanceId, java.lang.String parentTaskId, java.lang.String publicUid, java.lang.String revisionStatus, org.joda.time.DateTime revisionTimestamp, java.lang.Integer revisionSequence, org.joda.time.DateTime creationTimestamp, java.lang.String organizer, java.lang.String organizerId, java.lang.String subject, java.lang.String location, java.lang.String descriptionType, java.lang.String description, java.lang.String timezone, org.joda.time.DateTime start, org.joda.time.DateTime due, org.joda.time.DateTime completedOn, java.lang.Short progress, java.lang.String status, java.lang.Short importance, java.lang.Boolean isPrivate, java.lang.String documentRef, java.lang.String href, java.lang.String etag, java.lang.Integer reminder, org.joda.time.DateTime remindedOn, java.lang.String contact, java.lang.String contactId, java.lang.String company, java.lang.String companyId) {
 		super(com.sonicle.webtop.tasks.jooq.tables.Tasks.TASKS);
 
 		setValue(0, taskId);
@@ -533,14 +533,14 @@ public class TasksRecord extends org.jooq.impl.UpdatableRecordImpl<com.sonicle.w
 		setValue(21, status);
 		setValue(22, importance);
 		setValue(23, isPrivate);
-		setValue(24, href);
-		setValue(25, etag);
-		setValue(26, reminder);
-		setValue(27, remindedOn);
-		setValue(28, contact);
-		setValue(29, contactId);
-		setValue(30, company);
-		setValue(31, companyId);
-		setValue(32, documentRef);
+		setValue(24, documentRef);
+		setValue(25, href);
+		setValue(26, etag);
+		setValue(27, reminder);
+		setValue(28, remindedOn);
+		setValue(29, contact);
+		setValue(30, contactId);
+		setValue(31, company);
+		setValue(32, companyId);
 	}
 }

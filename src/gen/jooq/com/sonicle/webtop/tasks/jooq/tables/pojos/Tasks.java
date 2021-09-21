@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables.pojos;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tasks implements java.io.Serializable {
 
-	private static final long serialVersionUID = -529233168;
+	private static final long serialVersionUID = 1648732002;
 
 	private java.lang.String       taskId;
 	private java.lang.Integer      categoryId;
@@ -42,6 +42,7 @@ public class Tasks implements java.io.Serializable {
 	private java.lang.String       status;
 	private java.lang.Short        importance;
 	private java.lang.Boolean      isPrivate;
+	private java.lang.String       documentRef;
 	private java.lang.String       href;
 	private java.lang.String       etag;
 	private java.lang.Integer      reminder;
@@ -50,7 +51,6 @@ public class Tasks implements java.io.Serializable {
 	private java.lang.String       contactId;
 	private java.lang.String       company;
 	private java.lang.String       companyId;
-	private java.lang.String       documentRef;
 
 	public Tasks() {}
 
@@ -79,6 +79,7 @@ public class Tasks implements java.io.Serializable {
 		java.lang.String       status,
 		java.lang.Short        importance,
 		java.lang.Boolean      isPrivate,
+		java.lang.String       documentRef,
 		java.lang.String       href,
 		java.lang.String       etag,
 		java.lang.Integer      reminder,
@@ -86,8 +87,7 @@ public class Tasks implements java.io.Serializable {
 		java.lang.String       contact,
 		java.lang.String       contactId,
 		java.lang.String       company,
-		java.lang.String       companyId,
-		java.lang.String       documentRef
+		java.lang.String       companyId
 	) {
 		this.taskId = taskId;
 		this.categoryId = categoryId;
@@ -113,6 +113,7 @@ public class Tasks implements java.io.Serializable {
 		this.status = status;
 		this.importance = importance;
 		this.isPrivate = isPrivate;
+		this.documentRef = documentRef;
 		this.href = href;
 		this.etag = etag;
 		this.reminder = reminder;
@@ -121,7 +122,6 @@ public class Tasks implements java.io.Serializable {
 		this.contactId = contactId;
 		this.company = company;
 		this.companyId = companyId;
-		this.documentRef = documentRef;
 	}
 
 	public java.lang.String getTaskId() {
@@ -316,6 +316,14 @@ public class Tasks implements java.io.Serializable {
 		this.isPrivate = isPrivate;
 	}
 
+	public java.lang.String getDocumentRef() {
+		return this.documentRef;
+	}
+
+	public void setDocumentRef(java.lang.String documentRef) {
+		this.documentRef = documentRef;
+	}
+
 	public java.lang.String getHref() {
 		return this.href;
 	}
@@ -378,13 +386,5 @@ public class Tasks implements java.io.Serializable {
 
 	public void setCompanyId(java.lang.String companyId) {
 		this.companyId = companyId;
-	}
-
-	public java.lang.String getDocumentRef() {
-		return this.documentRef;
-	}
-
-	public void setDocumentRef(java.lang.String documentRef) {
-		this.documentRef = documentRef;
 	}
 }

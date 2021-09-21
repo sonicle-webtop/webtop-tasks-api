@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord> {
 
-	private static final long serialVersionUID = 1525923785;
+	private static final long serialVersionUID = -337575726;
 
 	/**
 	 * The reference instance of <code>tasks.tasks</code>
@@ -84,7 +84,7 @@ public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq
 	/**
 	 * The column <code>tasks.tasks.organizer</code>.
 	 */
-	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> ORGANIZER = createField("organizer", org.jooq.impl.SQLDataType.VARCHAR.length(320), this, "");
+	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> ORGANIZER = createField("organizer", org.jooq.impl.SQLDataType.VARCHAR.length(650), this, "");
 
 	/**
 	 * The column <code>tasks.tasks.organizer_id</code>.
@@ -139,7 +139,7 @@ public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq
 	/**
 	 * The column <code>tasks.tasks.status</code>.
 	 */
-	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> STATUS = createField("status", org.jooq.impl.SQLDataType.VARCHAR.length(15).nullable(false).defaulted(true), this, "");
+	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> STATUS = createField("status", org.jooq.impl.SQLDataType.VARCHAR.length(2).nullable(false).defaulted(true), this, "");
 
 	/**
 	 * The column <code>tasks.tasks.importance</code>.
@@ -150,6 +150,11 @@ public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq
 	 * The column <code>tasks.tasks.is_private</code>.
 	 */
 	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.Boolean> IS_PRIVATE = createField("is_private", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaulted(true), this, "");
+
+	/**
+	 * The column <code>tasks.tasks.document_ref</code>.
+	 */
+	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> DOCUMENT_REF = createField("document_ref", org.jooq.impl.SQLDataType.VARCHAR.length(100), this, "");
 
 	/**
 	 * The column <code>tasks.tasks.href</code>.
@@ -190,11 +195,6 @@ public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq
 	 * The column <code>tasks.tasks.company_id</code>.
 	 */
 	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> COMPANY_ID = createField("company_id", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
-
-	/**
-	 * The column <code>tasks.tasks.document_ref</code>.
-	 */
-	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, java.lang.String> DOCUMENT_REF = createField("document_ref", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
 
 	/**
 	 * Create a <code>tasks.tasks</code> table reference

@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord> {
 
-	private static final long serialVersionUID = 901213156;
+	private static final long serialVersionUID = 1592937929;
 
 	/**
 	 * The reference instance of <code>tasks.categories</code>
@@ -79,7 +79,7 @@ public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks
 	/**
 	 * The column <code>tasks.categories.is_default</code>.
 	 */
-	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord, java.lang.Boolean> IS_DEFAULT = createField("is_default", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false), this, "");
+	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord, java.lang.Boolean> IS_DEFAULT = createField("is_default", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaulted(true), this, "");
 
 	/**
 	 * Create a <code>tasks.categories</code> table reference

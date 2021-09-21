@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TasksAttachments extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksAttachmentsRecord> {
 
-	private static final long serialVersionUID = 226097560;
+	private static final long serialVersionUID = 290487836;
 
 	/**
 	 * The reference instance of <code>tasks.tasks_attachments</code>
@@ -34,7 +34,7 @@ public class TasksAttachments extends org.jooq.impl.TableImpl<com.sonicle.webtop
 	/**
 	 * The column <code>tasks.tasks_attachments.task_attachment_id</code>.
 	 */
-	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksAttachmentsRecord, java.lang.String> TASK_ATTACHMENT_ID = createField("task_attachment_id", org.jooq.impl.SQLDataType.VARCHAR.length(36).nullable(false), this, "");
+	public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.TasksAttachmentsRecord, java.lang.String> TASK_ATTACHMENT_ID = createField("task_attachment_id", org.jooq.impl.SQLDataType.VARCHAR.length(32).nullable(false), this, "");
 
 	/**
 	 * The column <code>tasks.tasks_attachments.task_id</code>.
