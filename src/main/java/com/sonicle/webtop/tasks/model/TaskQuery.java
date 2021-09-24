@@ -43,14 +43,16 @@ import com.sonicle.commons.web.json.bean.QueryObj;
 import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import com.sonicle.webtop.core.model.CustomField;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 
 /**
  *
- * @author Inis
+ * @author malbinola
  */
 public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 
@@ -112,7 +114,7 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 		return string("parent");
 	}
 
-	public static Condition<TaskQuery> toCondition(String pattern) {
+	public static Condition<TaskQuery> createCondition(String pattern) {
 		if (!StringUtils.isBlank(pattern)) {
 			return new TaskQuery().any().eq(StringUtils.replace(pattern, "%", "*"));
 		} else {
@@ -120,89 +122,81 @@ public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
 		}
 	}
 	
-	public static Condition<TaskQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
+	public static Condition<TaskQuery> createCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
 		boolean smartStringComparison = true;
-		TaskQuery q = new TaskQuery();
 		
-		Condition<TaskQuery> last = q.trueCondition();
-		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
-			q = last.and();
-			int pos = 0;
-			for (QueryObj.Condition queryCondition : entry.getValue()) {
-				pos++;
-				if (pos > 1) q = last.or();
-				
-				if ("subject".equals(queryCondition.keyword)) {
-					last = q.subject().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("location".equals(queryCondition.keyword)) {
-					last = q.location().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("description".equals(queryCondition.keyword)) {
-					last = q.description().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("after".equals(queryCondition.keyword)) {
-					String after = StringUtils.replace(queryCondition.value, "/", "-");
-					last = q.after().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(after), DateTimeUtils.toZoneId(timezone)));
-					
-				} else if ("before".equals(queryCondition.keyword)) {
-					String before = StringUtils.replace(queryCondition.value, "/", "-");
-					last = q.before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone)));
-					
-				} else if ("status".equals(queryCondition.keyword)) {
-					if (EnumUtils.forSerializedName(queryCondition.value, TaskBase.Status.class)== null) {
-						throw new UnsupportedOperationException(queryCondition.keyword + ":" + queryCondition.value);
-					}
-					last = q.status().eq(queryCondition.value);
-					
-				} else if ("is".equals(queryCondition.keyword)) {
-					switch (queryCondition.value) {
-						case "private":
-							if (queryCondition.negated) {
-								last = q.isPrivate().isFalse();
-							} else {
-								last = q.isPrivate().isTrue();
-							}
-							break;
-						case "done":
-							if (queryCondition.negated) {
-								last = q.isDone().isFalse();
-							} else {
-								last = q.isDone().isTrue();
-							}
-							break;
-						default:
-							throw new UnsupportedOperationException(queryCondition.keyword + ":" + queryCondition.value);
-					}
-					
-				} else if ("tag".equals(queryCondition.keyword)) {
-					last = q.tag().eq(queryCondition.value);
-				
-				} else if ("parent".equals(queryCondition.keyword)) {
-					last = q.parent().eq(queryCondition.value);
-					
-				} else if ("doc".equals(queryCondition.keyword)) {
-					last = q.document().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
-					CId cf = new CId(queryCondition.keyword, 2);
-					if (!cf.isTokenEmpty(1)) {
-						String cfId = cf.getToken(1);
-						if (customFieldTypeMapping.containsKey(cfId)) {
-							last = q.customValueCondition(cfId, customFieldTypeMapping.get(cfId), queryCondition.value, queryCondition.negated, smartStringComparison, timezone);
-						}
-					}
-					
-				} else {
-					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
+		Condition<TaskQuery> last = new TaskQuery().trueCondition();
+		for (Map.Entry<QueryObj.Condition, List<String>> entry : query.groupConditions(Arrays.asList("is")).entrySet()) {
+			final QueryObj.Condition key = entry.getKey();
+			final List<String> values = entry.getValue();
+			
+			if (values.isEmpty() || values.size() == 1) {
+				last = new TaskQuery().and(last, createCondition(key, values.isEmpty() ? null : values.get(0), customFieldTypeMapping, timezone, smartStringComparison));
+			} else {
+				List<Condition<TaskQuery>> conds = new ArrayList<>();
+				for (String value : entry.getValue()) {
+					conds.add(createCondition(key, value, customFieldTypeMapping, timezone, smartStringComparison));
+				}
+				last = new TaskQuery().and(last, new TaskQuery().or(conds));
+			}
+		}
+		
+		if (!StringUtils.isBlank(query.getAllText())) {
+			return new TaskQuery().and(last, new TaskQuery().any().eq(asStringValue(query.getAllText(), smartStringComparison)));
+		} else {
+			return last;
+		}
+	}
+	
+	private static Condition<TaskQuery> createCondition(QueryObj.Condition condition, String value, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone, boolean smartStringComparison) {
+		if ("subject".equals(condition.keyword)) {
+			return new TaskQuery().subject().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("location".equals(condition.keyword)) {
+			return new TaskQuery().location().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("description".equals(condition.keyword)) {
+			return new TaskQuery().description().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("after".equals(condition.keyword)) {
+			String after = StringUtils.replace(value, "/", "-");
+			return new TaskQuery().after().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(after), DateTimeUtils.toZoneId(timezone)));
+
+		} else if ("before".equals(condition.keyword)) {
+			String before = StringUtils.replace(value, "/", "-");
+			return new TaskQuery().before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone)));
+
+		} else if ("status".equals(condition.keyword)) {
+			if (EnumUtils.forSerializedName(value, TaskBase.Status.class)== null) {
+				throw new UnsupportedOperationException(condition.keyword + ":" + value);
+			}
+			return new TaskQuery().status().eq(value);
+
+		} else if ("private".equals(condition.keyword)) {
+			return condition.negated ? new TaskQuery().isPrivate().isFalse() : new TaskQuery().isPrivate().isTrue();
+
+		} else if ("done".equals(condition.keyword)) {
+			return condition.negated ? new TaskQuery().isDone().isFalse() : new TaskQuery().isDone().isTrue();
+
+		} else if ("tag".equals(condition.keyword)) {
+			return new TaskQuery().tag().eq(value);
+
+		} else if ("parent".equals(condition.keyword)) {
+			return new TaskQuery().parent().eq(value);
+
+		} else if ("doc".equals(condition.keyword)) {
+			return new TaskQuery().document().eq(asStringValue(value, smartStringComparison));
+
+		} else if (StringUtils.startsWith(condition.keyword, "cfield")) {
+			CId cf = new CId(condition.keyword, 2);
+			if (!cf.isTokenEmpty(1)) {
+				String cfId = cf.getToken(1);
+				if (customFieldTypeMapping.containsKey(cfId)) {
+					return new TaskQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), value, condition.negated, smartStringComparison, timezone);
 				}
 			}
 		}
 		
-		if (!StringUtils.isBlank(query.allText)) {
-			return last.and().any().eq(asStringValue(query.allText, smartStringComparison));
-		} else {
-			return last;
-		}
+		throw new WTUnsupportedOperationException("Unsupported keyword '{}'", condition.keyword);
 	}
 }
