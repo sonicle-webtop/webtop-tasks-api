@@ -84,21 +84,21 @@ public class TaskInstanceId extends CId {
 			return null;
 		}
 	}
-
+	
+	public static TaskInstanceId build(final String taskId, final DateTime instance, final DateTimeZone timezone) {
+		return build(taskId, DateTimeUtils.print(DateTimeUtils.createFormatter("yyyyMMdd", timezone), instance));
+	}
+	
+	/* Avoid UTC usage
 	public static TaskInstanceId build(final String taskId, final DateTime instance) {
 		return build(taskId, DateTimeUtils.print(DateTimeUtils.createFormatter("yyyyMMdd", DateTimeZone.UTC), instance));
 	}
-
-	/*
-	public static Id build(final String taskId, final LocalDate instance) {
-		String inst = (instance == null) ? MASTER_INSTANCE_ID : DateTimeFormat.forPattern("yyyyMMdd").withZone(DateTimeZone.UTC).print(instance);
-		return new Builder()
-			.withSeparator(".")
-			.withTokens(Check.notNull(taskId, "taskId"), inst)
-			.build();
-	}
 	*/
-
+	
+	public static TaskInstanceId buildMaster(final String taskId) {
+		return build(taskId, MASTER_INSTANCE_ID);
+	}
+	
 	public static TaskInstanceId build(final String taskId, final String instance) {
 		return new Builder()
 			.withSeparator(".")
