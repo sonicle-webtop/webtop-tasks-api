@@ -220,7 +220,11 @@ public class TaskBase {
 	}
 
 	public void setImportance(Short importance) {
-		this.importance = importance;
+		if (importance == null || importance < 1 || importance > 9) {
+			this.importance = 5;
+		} else {
+			this.importance = importance;
+		}
 	}
 
 	public Boolean getIsPrivate() {

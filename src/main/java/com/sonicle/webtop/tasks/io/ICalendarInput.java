@@ -336,11 +336,11 @@ public class ICalendarInput implements TasksStreamReader {
 		// https://www.kanzaki.com/docs/ical/status.html
 		/*
 			Implemented mapping:
-			 1) NULL -> "unspecified" / "waiting" (WA)
-			 2) NEEDS_ACTION -> "require action" / "not started" (NA)
-			 3) CANCELLED -> "cancelled" / "deferred" (CA)
-			 4) IN_PROCESS -> "in progress" (IP)
-			 5) COMPLETED -> "completed" (CO)
+			 - NULL -> "unspecified" / "waiting" (WA)
+			 - NEEDS_ACTION -> "require action" / "not started" (NA)
+			 - CANCELLED -> "cancelled" / "deferred" (CA)
+			 - IN_PROCESS -> "in progress" (IP)
+			 - COMPLETED -> "completed" (CO)
 		*/
 		if (status == null) {
 			return TaskBase.Status.WAITING;
@@ -367,6 +367,11 @@ public class ICalendarInput implements TasksStreamReader {
 		
 			IW -> low: 9, medium: 0, high: 1
 			TB -> low: 9, normal: 5, high: 1, undefined: 0
+		
+			Implemented mapping:
+			 - null, 0 -> 5 (normal)
+		     - level -> level
+			 We use 9 (low), 5 (normal), 1 (high)
 		*/
 		if (priority == null) {
 			return 5;
