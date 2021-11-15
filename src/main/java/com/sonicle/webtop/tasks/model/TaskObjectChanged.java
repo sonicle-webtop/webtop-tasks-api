@@ -39,18 +39,18 @@ import org.joda.time.DateTime;
  * @author malbinola
  */
 public class TaskObjectChanged {
-	protected final Integer taskId;
+	protected final String taskId;
 	protected final DateTime revisionTimestamp;
 	//protected final String publicUid;
 	protected final String href;
 	
-	public TaskObjectChanged(int taskId, DateTime revisionTimestamp, String href) {
+	public TaskObjectChanged(String taskId, DateTime revisionTimestamp, String href) {
 		this.taskId = taskId;
 		this.revisionTimestamp = revisionTimestamp;
 		this.href = href;
 	}
 
-	public Integer getTaskId() {
+	public String getTaskId() {
 		return taskId;
 	}
 

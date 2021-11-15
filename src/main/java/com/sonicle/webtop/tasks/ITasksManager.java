@@ -90,12 +90,6 @@ public interface ITasksManager {
 	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
 	public Map<Integer, CategoryPropSet> getCategoriesCustomProps(Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
-	public List<TaskObject> listTaskObjects(int categoryId, TaskObjectOutputType outputType) throws WTException;
-	public LangUtils.CollectionChangeSet<TaskObjectChanged> listTaskObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
-	public TaskObjectWithICalendar getTaskObjectWithICalendar(int categoryId, String href) throws WTException;
-	public List<TaskObjectWithICalendar> getTaskObjectsWithICalendar(int categoryId, Collection<String> hrefs) throws WTException;
-	public TaskObject getTaskObject(final TaskInstanceId instanceId, final TaskObjectOutputType outputType) throws WTException;
-	public Task addTask(final TaskEx task) throws WTException;
 	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final DateTimeZone targetTimezone) throws WTException;
 	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
 	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final InstantRange viewRange, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
@@ -103,6 +97,7 @@ public interface ITasksManager {
 	public TaskInstance getTaskInstance(final TaskInstanceId instanceId, final BitFlag<TaskGetOptions> options) throws WTException;
 	public TaskAttachmentWithBytes getTaskInstanceAttachment(final TaskInstanceId instanceId, final String attachmentId) throws WTException;
 	public Map<String, CustomFieldValue> getTaskInstanceCustomValues(final TaskInstanceId instanceId) throws WTException;
+	public Task addTask(final TaskEx task) throws WTException;
 	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task) throws WTException;
 	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task, final BitFlag<TaskUpdateOptions> options) throws WTException;
 	public void updateQuickTaskInstance(final TaskInstanceId instanceId, final Boolean completed, final Short progress, final Short importance) throws WTException;
@@ -113,6 +108,15 @@ public interface ITasksManager {
 	public void moveTaskInstance(final boolean copy, final Collection<TaskInstanceId> instanceIds, final int targetCategoryId) throws WTException;
 	public void updateTaskInstanceTags(final UpdateTagsOperation operation, final Collection<TaskInstanceId> instanceIds, final Set<String> tagIds) throws WTException;
 	public void updateTaskCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
+	public List<TaskObject> listTaskObjects(int categoryId, TaskObjectOutputType outputType) throws WTException;
+	public LangUtils.CollectionChangeSet<TaskObjectChanged> listTaskObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
+	public List<TaskObject> getTaskObjects(final int categoryId, final Collection<String> hrefs, final TaskObjectOutputType outputType) throws WTException;
+	public TaskObject getTaskObject(final int categoryId, final String href, final TaskObjectOutputType outputType) throws WTException;
+	//public TaskObjectWithICalendar getTaskObjectWithICalendar(int categoryId, String href) throws WTException;
+	//public List<TaskObjectWithICalendar> getTaskObjectsWithICalendar(int categoryId, Collection<String> hrefs) throws WTException;
+	public TaskObject getTaskObject(final TaskInstanceId instanceId, final TaskObjectOutputType outputType) throws WTException;
+	public void addTaskObject(final int categoryId, final String href, final net.fortuna.ical4j.model.Calendar iCalendar) throws WTException;
+	public void deleteTaskObject(final int categoryId, final String href) throws WTException;
 	
 	public static enum TaskListView {
 		@SerializedName("all") ALL,

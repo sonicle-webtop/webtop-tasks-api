@@ -33,6 +33,7 @@
 package com.sonicle.webtop.tasks.model;
 
 import com.sonicle.webtop.core.util.ICal4jUtils;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import net.fortuna.ical4j.model.Recur;
 import net.sf.qualitycheck.Check;
@@ -80,6 +81,14 @@ public class TaskRecurrence {
 
 	public void setExcludedDates(Set<LocalDate> excludedDates) {
 		this.excludedDates = excludedDates;
+	}
+	
+	public void addExcludedDates(Set<LocalDate> excludedDates) {
+		if (this.excludedDates == null) {
+			this.excludedDates = new LinkedHashSet<>(excludedDates);
+		} else {
+			this.excludedDates.addAll(excludedDates);
+		}
 	}
 	
 	public Recur getRuleRecur() {
