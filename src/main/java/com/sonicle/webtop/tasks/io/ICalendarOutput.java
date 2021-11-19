@@ -105,15 +105,11 @@ public class ICalendarOutput {
 		return this;
 	}
 	
-	public String printICalendar(TaskEx task, PropertyList extraProps, String relatedToUid) throws WTException, IOException {
-		return ICalendarUtils.print(composeICalendar(task, extraProps, relatedToUid));
+	public String writeICalendar(TaskEx task, PropertyList extraProps, String relatedToUid) throws WTException, IOException {
+		return ICalendarUtils.print(createToDoObjectsCollection(Arrays.asList(new TaskOutput(task, extraProps, relatedToUid))));
 	}
 	
-	public Calendar composeICalendar(TaskEx task, PropertyList extraProps, String relatedToUid) throws WTException {
-		return composeICalendar(Arrays.asList(new TaskOutput(task, extraProps, relatedToUid)));
-	}
-	
-	public Calendar composeICalendar(Collection<TaskOutput> outputs) throws WTException {
+	public Calendar createToDoObjectsCollection(Collection<TaskOutput> outputs) throws WTException {
 		Calendar ical = ICalendarUtils.newCalendar(prodId, null);
 		
 		int count = 0;
@@ -133,7 +129,7 @@ public class ICalendarOutput {
 			}
 			
 			try {
-				ical.getComponents().add(composeVToDo(output.task, output.extraProps, output.relatedToUid, logHandler));
+				ical.getComponents().add(createToDoObject(output.task, output.extraProps, output.relatedToUid, logHandler));
 			} catch(Throwable t) {
 				log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
 			}
@@ -146,7 +142,11 @@ public class ICalendarOutput {
 		return ical;
 	}
 	
-	public VToDo composeVToDo(TaskEx task, PropertyList extraProps, String relatedToUid, LogHandler logHandler) throws WTException {
+	public VToDo createToDoObject(TaskEx task, PropertyList extraProps, String relatedToUid) throws WTException {
+		return createToDoObject(task, extraProps, relatedToUid, null);
+	}
+	
+	private VToDo createToDoObject(TaskEx task, PropertyList extraProps, String relatedToUid, LogHandler logHandler) throws WTException {
 		VToDo vtodo = new VToDo();
 		
 		// UID: globally unique identifier

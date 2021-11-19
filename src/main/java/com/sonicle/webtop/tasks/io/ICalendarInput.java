@@ -119,13 +119,13 @@ public class ICalendarInput implements TasksStreamReader {
 	
 	public ArrayList<TaskInput> parseICalendar(InputStream is) throws IOException, WTException {
 		try {
-			return parseCalendar(ICalendarUtils.parse(is));
+			return parseToDoObjects(ICalendarUtils.parse(is));
 		} catch (ParserException ex) {
 			throw new IOException("Unable to parse", ex);
 		}	
 	}
 	
-	public ArrayList<TaskInput> parseCalendar(Calendar calendar) throws WTException {
+	public ArrayList<TaskInput> parseToDoObjects(Calendar calendar) throws WTException {
 		// http://www.kanzaki.com/docs/ical/
 		ArrayList<TaskInput> results = new ArrayList<>();
 		
@@ -148,7 +148,7 @@ public class ICalendarInput implements TasksStreamReader {
 				}
 				
 				try {
-					final TaskInput result = parseVToDo(vtd, buffLogHandler);
+					final TaskInput result = parseToDoObject(vtd, buffLogHandler);
 					//if (result.task.trimFieldLengths()) {
 					//	log(buffLogHandler, 1, LogEntry.Level.WARN, "Some fields were truncated due to max-length");
 					//}
@@ -167,7 +167,11 @@ public class ICalendarInput implements TasksStreamReader {
 		return results;
 	}
 	
-	public TaskInput parseVToDo(VToDo vtodo, LogHandler logHandler) throws WTException {
+	public TaskInput parseToDoObject(VToDo vtodo) throws WTException {
+		return parseToDoObject(vtodo, null);
+	}
+	
+	private TaskInput parseToDoObject(VToDo vtodo, LogHandler logHandler) throws WTException {
 		// https://www.kanzaki.com/docs/ical/vtodo.html
 		TaskBase task = new TaskBase();
 		TaskRecurrence taskRecurrence = null;
