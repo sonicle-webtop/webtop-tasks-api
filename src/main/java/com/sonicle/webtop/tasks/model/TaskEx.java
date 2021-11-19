@@ -113,6 +113,10 @@ public class TaskEx extends TaskBase {
 		this.customValues = customValues;
 	}
 	
+	public Set<String> getTagsOrEmpty() {
+		return this.tags != null ? tags : new LinkedHashSet<>(0);
+	}
+	
 	public TaskEx addTag(String tagId) {
 		if (this.tags == null) this.tags = new LinkedHashSet<>();
 		this.tags.add(Check.notNull(tagId, "tagId"));
@@ -124,6 +128,14 @@ public class TaskEx extends TaskBase {
 			this.tags.remove(Check.notNull(tagId, "tagId"));
 		}
 		return this;
+	}
+	
+	public List<TaskAssignee> getAssigneesOrEmpty() {
+		return this.assignees != null ? assignees : new ArrayList<>(0);
+	}
+	
+	public List<TaskAttachment> getAttachmentsOrEmpty() {
+		return this.attachments != null ? attachments : new ArrayList<>(0);
 	}
 	
 	public TaskEx addAttachment(TaskAttachment attachment) {
