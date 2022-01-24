@@ -35,6 +35,7 @@ package com.sonicle.webtop.tasks.model;
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.InternetAddressUtils;
 import jakarta.mail.internet.InternetAddress;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -311,6 +312,13 @@ public class TaskBase {
 	
 	public boolean isCensorized() {
 		return this.censorized;
+	}
+	
+	public void prependToSubject(String prefix) {
+		String subj = getSubject();
+		if (!StringUtils.isBlank(prefix) && !StringUtils.isBlank(subj)) {
+			setSubject(prefix + " " + subj);	
+		}
 	}
 	
 	public void censorize() {
