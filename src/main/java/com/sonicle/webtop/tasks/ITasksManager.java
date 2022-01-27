@@ -46,7 +46,6 @@ import com.sonicle.webtop.tasks.model.Task;
 import com.sonicle.webtop.tasks.model.TaskAttachmentWithBytes;
 import com.sonicle.webtop.tasks.model.TaskObject;
 import com.sonicle.webtop.tasks.model.TaskObjectChanged;
-import com.sonicle.webtop.tasks.model.TaskObjectWithICalendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -104,8 +103,8 @@ public interface ITasksManager {
 	public void updateQuickTaskInstance(final Collection<TaskInstanceId> instanceIds, final Boolean completed, final Short progress, final Short importance) throws WTException;
 	public void deleteTaskInstance(final TaskInstanceId instanceId) throws WTException;
 	public void deleteTaskInstance(final Collection<TaskInstanceId> instanceIds) throws WTException;
-	public void moveTaskInstance(final boolean copy, final TaskInstanceId instanceId, final int targetCategoryId) throws WTException;
-	public void moveTaskInstance(final boolean copy, final Collection<TaskInstanceId> instanceIds, final int targetCategoryId) throws WTException;
+	public void moveTaskInstance(final MoveCopyMode copyMode, final TaskInstanceId instanceId, final int targetCategoryId) throws WTException;
+	public void moveTaskInstance(final MoveCopyMode copyMode, final Collection<TaskInstanceId> instanceIds, final int targetCategoryId) throws WTException;
 	public void updateTaskInstanceTags(final UpdateTagsOperation operation, final Collection<TaskInstanceId> instanceIds, final Set<String> tagIds) throws WTException;
 	public void updateTaskCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public List<TaskObject> listTaskObjects(int categoryId, TaskObjectOutputType outputType) throws WTException;
@@ -132,6 +131,12 @@ public interface ITasksManager {
 	public static enum ImportMode {
 		@SerializedName("copy") COPY,
 		@SerializedName("append") APPEND
+	}
+	
+	public static enum MoveCopyMode {
+		@SerializedName("none") NONE,
+		@SerializedName("root") ROOT,
+		@SerializedName("tree") TREE
 	}
 	
 	public static enum TaskGetOptions implements BitFlagEnum {
