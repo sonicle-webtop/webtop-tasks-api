@@ -35,6 +35,9 @@ package com.sonicle.webtop.tasks.model;
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.InternetAddressUtils;
 import jakarta.mail.internet.InternetAddress;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -66,7 +69,7 @@ public class TaskBase {
 	protected Boolean isPrivate;
 	protected String href;
 	protected String etag;
-	protected Integer reminder;
+	protected Reminder reminder;
 	protected String contact;
 	protected String contactId;
 	protected String documentRef;
@@ -252,11 +255,11 @@ public class TaskBase {
 		this.etag = etag;
 	}
 
-	public Integer getReminder() {
+	public Reminder getReminder() {
 		return reminder;
 	}
 
-	public void setReminder(Integer reminder) {
+	public void setReminder(Reminder reminder) {
 		this.reminder = reminder;
 	}
 
@@ -345,5 +348,42 @@ public class TaskBase {
 		@SerializedName("IP") IN_PROGRESS,
 		@SerializedName("CA") CANCELLED,
 		@SerializedName("WA") WAITING
+	}
+	
+	public static class Reminder {
+		private static final Integer[] VALUES = new Integer[]{0,5,10,15,30,45,60,120,180,240,300,360,420,480,540,600,660,720,1080,1440,2880,10080,20160,43200};
+		private static final Set<Integer> VALID_VALUES = new HashSet<>(Arrays.asList(VALUES));
+		private final int minutes;
+		
+		public Reminder(int minutes) {
+			if (minutes < 0) {
+				this.minutes = VALUES[0];
+			} else {
+				this.minutes = findNearestMinutesValue(minutes);
+			}
+		}
+		
+		public int getMinutesValue() {
+			return minutes;
+		}
+		
+		public static int findNearestMinutesValue(int minutes) {
+			if (VALID_VALUES.contains(minutes)) {
+				return minutes;
+			} else {
+				for (int i=1; i < VALUES.length; i++) {
+					if (minutes < VALUES[i]) return VALUES[i];
+				}
+				return VALUES[VALUES.length-1];
+			}
+		}
+		
+		public static Reminder valueOf(Integer minutes) {
+			return (minutes == null) ? null : new Reminder(minutes);
+		}
+		
+		public static Integer getMinutesValue(Reminder reminder) {
+			return (reminder == null) ? null : reminder.getMinutesValue();
+		}
 	}
 }
