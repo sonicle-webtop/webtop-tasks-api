@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TasksIcalendars extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksIcalendarsRecord> {
 
-	private static final long serialVersionUID = 1617341974;
+	private static final long serialVersionUID = -1548218821;
 
 	/**
 	 * The reference instance of <code>tasks.tasks_icalendars</code>
@@ -77,6 +77,14 @@ public class TasksIcalendars extends org.jooq.impl.TableImpl<com.sonicle.webtop.
 	@Override
 	public java.util.List<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksIcalendarsRecord>> getKeys() {
 		return java.util.Arrays.<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksIcalendarsRecord>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_ICALENDARS_PKEY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksIcalendarsRecord, ?>> getReferences() {
+		return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksIcalendarsRecord, ?>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_ICALENDARS__TASKS_ICALENDARS_TASK_ID_FKEY);
 	}
 
 	/**

@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables.pojos;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Categories implements java.io.Serializable {
 
-	private static final long serialVersionUID = 961930746;
+	private static final long serialVersionUID = 1899479118;
 
 	private java.lang.Integer categoryId;
 	private java.lang.String  domainId;
@@ -28,6 +28,7 @@ public class Categories implements java.io.Serializable {
 	private java.lang.String  sync;
 	private java.lang.Boolean isPrivate;
 	private java.lang.Boolean isDefault;
+	private java.lang.Integer reminder;
 
 	public Categories() {}
 
@@ -41,7 +42,8 @@ public class Categories implements java.io.Serializable {
 		java.lang.String  color,
 		java.lang.String  sync,
 		java.lang.Boolean isPrivate,
-		java.lang.Boolean isDefault
+		java.lang.Boolean isDefault,
+		java.lang.Integer reminder
 	) {
 		this.categoryId = categoryId;
 		this.domainId = domainId;
@@ -53,6 +55,7 @@ public class Categories implements java.io.Serializable {
 		this.sync = sync;
 		this.isPrivate = isPrivate;
 		this.isDefault = isDefault;
+		this.reminder = reminder;
 	}
 
 	public java.lang.Integer getCategoryId() {
@@ -133,5 +136,13 @@ public class Categories implements java.io.Serializable {
 
 	public void setIsDefault(java.lang.Boolean isDefault) {
 		this.isDefault = isDefault;
+	}
+
+	public java.lang.Integer getReminder() {
+		return this.reminder;
+	}
+
+	public void setReminder(java.lang.Integer reminder) {
+		this.reminder = reminder;
 	}
 }

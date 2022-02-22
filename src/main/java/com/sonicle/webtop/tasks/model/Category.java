@@ -51,6 +51,7 @@ public class Category {
 	private String color;
 	private Sync sync;
 	private Boolean isPrivate;
+	private Integer defaultReminder;
 
 	public Integer getCategoryId() {
 		return categoryId;
@@ -122,6 +123,14 @@ public class Category {
 
 	public void setIsPrivate(Boolean isPrivate) {
 		this.isPrivate = isPrivate;
+	}
+	
+	public Integer getDefaultReminder() {
+		return defaultReminder;
+	}
+
+	public void setDefaultReminder(Integer defaultReminder) {
+		this.defaultReminder = defaultReminder;
 	}
 	
 	public UserProfileId getProfileId() {

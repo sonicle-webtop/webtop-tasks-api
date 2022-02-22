@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TasksCustomValues extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksCustomValuesRecord> {
 
-	private static final long serialVersionUID = -229816382;
+	private static final long serialVersionUID = -1720946195;
 
 	/**
 	 * The reference instance of <code>tasks.tasks_custom_values</code>
@@ -102,6 +102,14 @@ public class TasksCustomValues extends org.jooq.impl.TableImpl<com.sonicle.webto
 	@Override
 	public java.util.List<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksCustomValuesRecord>> getKeys() {
 		return java.util.Arrays.<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksCustomValuesRecord>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_CUSTOM_VALUES_PKEY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksCustomValuesRecord, ?>> getReferences() {
+		return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksCustomValuesRecord, ?>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_CUSTOM_VALUES__TASKS_CUSTOM_VALUES_TASK_ID_FKEY);
 	}
 
 	/**

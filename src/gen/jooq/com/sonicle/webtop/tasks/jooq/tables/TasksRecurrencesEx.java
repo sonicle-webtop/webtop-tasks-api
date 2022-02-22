@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TasksRecurrencesEx extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecurrencesExRecord> {
 
-	private static final long serialVersionUID = -857748922;
+	private static final long serialVersionUID = -2111050525;
 
 	/**
 	 * The reference instance of <code>tasks.tasks_recurrences_ex</code>
@@ -77,6 +77,14 @@ public class TasksRecurrencesEx extends org.jooq.impl.TableImpl<com.sonicle.webt
 	@Override
 	public java.util.List<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecurrencesExRecord>> getKeys() {
 		return java.util.Arrays.<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecurrencesExRecord>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_RECURRENCES_EX_PKEY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecurrencesExRecord, ?>> getReferences() {
+		return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecurrencesExRecord, ?>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_RECURRENCES_EX__TASKS_RECURRENCES_EX_TASK_ID_FKEY);
 	}
 
 	/**

@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord> {
 
-	private static final long serialVersionUID = -337575726;
+	private static final long serialVersionUID = 856767036;
 
 	/**
 	 * The reference instance of <code>tasks.tasks</code>
@@ -232,6 +232,14 @@ public class Tasks extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq
 	@Override
 	public java.util.List<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord>> getKeys() {
 		return java.util.Arrays.<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS_PKEY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, ?>> getReferences() {
+		return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.TasksRecord, ?>>asList(com.sonicle.webtop.tasks.jooq.Keys.TASKS__TASKS_SERIES_TASK_ID_FKEY, com.sonicle.webtop.tasks.jooq.Keys.TASKS__TASKS_PARENT_TASK_ID_FKEY);
 	}
 
 	/**

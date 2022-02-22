@@ -16,7 +16,7 @@ package com.sonicle.webtop.tasks.jooq.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class CategoryProps extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks.jooq.tables.records.CategoryPropsRecord> {
 
-	private static final long serialVersionUID = -730876858;
+	private static final long serialVersionUID = 24533494;
 
 	/**
 	 * The reference instance of <code>tasks.category_props</code>
@@ -97,6 +97,14 @@ public class CategoryProps extends org.jooq.impl.TableImpl<com.sonicle.webtop.ta
 	@Override
 	public java.util.List<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.CategoryPropsRecord>> getKeys() {
 		return java.util.Arrays.<org.jooq.UniqueKey<com.sonicle.webtop.tasks.jooq.tables.records.CategoryPropsRecord>>asList(com.sonicle.webtop.tasks.jooq.Keys.CATEGORY_PROPS_PKEY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.CategoryPropsRecord, ?>> getReferences() {
+		return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.tasks.jooq.tables.records.CategoryPropsRecord, ?>>asList(com.sonicle.webtop.tasks.jooq.Keys.CATEGORY_PROPS__CATEGORY_PROPS_CATEGORY_ID_FKEY);
 	}
 
 	/**
