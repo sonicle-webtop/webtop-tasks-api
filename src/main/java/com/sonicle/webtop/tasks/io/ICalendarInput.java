@@ -319,7 +319,7 @@ public class ICalendarInput implements TasksStreamReader {
 		return new TaskInput(task, taskRecurrence, recurringRefs, tagNames, relatedToUid, extraProps, returnCalendarObject ? vtodo : null);
 	}
 	
-	public String toTaskOrganizer(Organizer organizer) {
+	public static String toTaskOrganizer(Organizer organizer) {
 		// http://www.kanzaki.com/docs/ical/organizer.html
 		
 		if (organizer != null) {
@@ -336,7 +336,7 @@ public class ICalendarInput implements TasksStreamReader {
 		return null;
 	}
 	
-	public TaskBase.Status toTaskStatus(Status status) {
+	public static TaskBase.Status toTaskStatus(Status status) {
 		// https://www.kanzaki.com/docs/ical/status.html
 		/*
 			Implemented mapping:
@@ -361,7 +361,7 @@ public class ICalendarInput implements TasksStreamReader {
 		}
 	}
 	
-	public int toTaskPriority(Priority priority) {
+	public static int toTaskPriority(Priority priority) {
 		// https://www.kanzaki.com/docs/ical/priority.html
 		/*
 			There are 3 schemes:
