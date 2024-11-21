@@ -32,26 +32,14 @@
  */
 package com.sonicle.webtop.tasks.model;
 
-import com.google.gson.annotations.SerializedName;
 import com.rits.cloning.Cloner;
-import com.sonicle.webtop.core.sdk.UserProfileId;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author malbinola
  */
-public class Category {
-	private Integer categoryId;
-	private String domainId;
-	private String userId;
-	private Boolean builtIn;
-	private String name;
-	private String description;
-	private String color;
-	private Sync sync;
-	private Boolean isPrivate;
-	private Integer defaultReminder;
+public class Category extends CategoryBase {
+	protected Integer categoryId;
 
 	public Integer getCategoryId() {
 		return categoryId;
@@ -60,106 +48,13 @@ public class Category {
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
-
-	public String getDomainId() {
-		return domainId;
-	}
-
-	public void setDomainId(String domainId) {
-		this.domainId = domainId;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public Boolean getBuiltIn() {
-		return builtIn;
-	}
-
-	public void setBuiltIn(Boolean builtIn) {
-		this.builtIn = builtIn;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getColor() {
-		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color;
-	}
-
-	public Sync getSync() {
-		return sync;
-	}
-
-	public void setSync(Sync sync) {
-		this.sync = sync;
-	}
-
-	public Boolean getIsPrivate() {
-		return isPrivate;
-	}
-
-	public void setIsPrivate(Boolean isPrivate) {
-		this.isPrivate = isPrivate;
-	}
 	
-	public Integer getDefaultReminder() {
-		return defaultReminder;
-	}
-
-	public void setDefaultReminder(Integer defaultReminder) {
-		this.defaultReminder = defaultReminder;
-	}
-	
-	public UserProfileId getProfileId() {
-		return new UserProfileId(getDomainId(), getUserId());
-	}
-	
-	public void setProfileId(UserProfileId pid) {
-		setDomainId(pid.getDomain());
-		setUserId(pid.getUser());
-	}
-	
-	public Category applyPropSet(CategoryPropSet propSet) {
+	public static Category cloneAndSetProps(Category source, CategoryPropSet propSet) {
+		Category clone = Cloner.standard().deepClone(source);
 		if (propSet != null) {
-			Category clone = Cloner.standard().deepClone(this);
 			clone.setColor(propSet.getColorOrDefault(clone.getColor()));
 			clone.setSync(propSet.getSyncOrDefault(clone.getSync()));
-			return clone;
-		} else {
-			return this;
 		}
-	}
-	
-	public static String getHexColor(String color) {
-		return StringUtils.upperCase((StringUtils.indexOf(color, "#") == 0) ? StringUtils.substring(color, 1) : color);
-	}
-	
-	public static enum Sync {
-		@SerializedName("O") OFF,
-		@SerializedName("R") READ,
-		@SerializedName("W") WRITE
+		return clone;
 	}
 }

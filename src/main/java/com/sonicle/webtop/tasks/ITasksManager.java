@@ -50,10 +50,13 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.beans.SortInfo;
+import com.sonicle.commons.flags.BitFlags;
+import com.sonicle.commons.flags.BitFlagsEnum;
 import com.sonicle.commons.time.InstantRange;
 import com.sonicle.webtop.core.app.model.FolderSharing;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.UserProfileId;
+import com.sonicle.webtop.tasks.model.CategoryBase;
 import com.sonicle.webtop.tasks.model.CategoryFSFolder;
 import com.sonicle.webtop.tasks.model.CategoryFSOrigin;
 import com.sonicle.webtop.tasks.model.TaskEx;
@@ -89,9 +92,9 @@ public interface ITasksManager {
 	public boolean existCategory(final int categoryId) throws WTException;
 	public Category getCategory(final int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;
-	public Category addCategory(final Category cat) throws WTException;
+	public Category addCategory(final CategoryBase category) throws WTException;
 	public Category addBuiltInCategory() throws WTException;
-	public void updateCategory(final Category cat) throws Exception;
+	public void updateCategory(final int categoryId, final CategoryBase category) throws Exception;
 	public boolean deleteCategory(final int categoryId) throws WTException;
 	public CategoryPropSet getCategoryCustomProps(final int categoryId) throws WTException;
 	public Map<Integer, CategoryPropSet> getCategoriesCustomProps(final Collection<Integer> categoryIds) throws WTException;
@@ -100,7 +103,7 @@ public interface ITasksManager {
 	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
 	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final InstantRange viewRange, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
 	public TaskInstance getTaskInstance(final TaskInstanceId instanceId) throws WTException;
-	public TaskInstance getTaskInstance(final TaskInstanceId instanceId, final BitFlag<TaskGetOptions> options) throws WTException;
+	public TaskInstance getTaskInstance(final TaskInstanceId instanceId, final BitFlags<TaskGetOption> options) throws WTException;
 	public TaskAttachmentWithBytes getTaskInstanceAttachment(final TaskInstanceId instanceId, final String attachmentId) throws WTException;
 	public Map<String, CustomFieldValue> getTaskInstanceCustomValues(final TaskInstanceId instanceId) throws WTException;
 	public Task addTask(final TaskEx task) throws WTException;
@@ -146,13 +149,13 @@ public interface ITasksManager {
 		@SerializedName("tree") TREE
 	}
 	
-	public static enum TaskGetOptions implements BitFlagEnum {
-		ATTACHMENTS(1), TAGS(2), CUSTOM_VALUES(4);
+	public static enum TaskGetOption implements BitFlagsEnum<TaskGetOption> {
+		ATTACHMENTS(1 << 0), TAGS(1 << 1), CUSTOM_VALUES(1 << 2);
 		
-		private int value = 0;
-		private TaskGetOptions(int value) { this.value = value; }
+		private int mask = 0;
+		private TaskGetOption(int mask) { this.mask = mask; }
 		@Override
-		public int value() { return this.value; }
+		public long mask() { return this.mask; }
 	}
 	
 	public static enum TaskUpdateOptions implements BitFlagEnum {
