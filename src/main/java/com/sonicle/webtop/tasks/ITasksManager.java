@@ -148,7 +148,7 @@ public interface ITasksManager {
 	}
 	
 	public static enum TaskGetOption implements BitFlagsEnum<TaskGetOption> {
-		ATTACHMENTS(1 << 0), TAGS(1 << 1), CUSTOM_VALUES(1 << 2);
+		ATTACHMENTS(1<<0), TAGS(1<<1), CUSTOM_VALUES(1<<2);
 		
 		private int mask = 0;
 		private TaskGetOption(int mask) { this.mask = mask; }
@@ -157,7 +157,7 @@ public interface ITasksManager {
 	}
 	
 	public static enum TaskUpdateOption implements BitFlagsEnum<TaskUpdateOption> {
-		ASSIGNEES(1 << 0), ATTACHMENTS(1 << 1), TAGS(1 << 2), CUSTOM_VALUES(1 << 3), CONTACT_REF(1 << 4), DOCUMENT_REF(1 << 5);
+		ASSIGNEES(1<<0), ATTACHMENTS(1<<1), TAGS(1<<2), CUSTOM_VALUES(1<<3), CONTACT_REF(1<<4), DOCUMENT_REF(1<<5);
 		
 		private int mask = 0;
 		private TaskUpdateOption(int mask) { this.mask = mask; }
