@@ -33,8 +33,6 @@
 package com.sonicle.webtop.tasks;
 
 import com.google.gson.annotations.SerializedName;
-import com.sonicle.commons.BitFlag;
-import com.sonicle.commons.BitFlagEnum;
 import com.sonicle.webtop.tasks.model.TaskQuery;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.WTException;
@@ -108,7 +106,7 @@ public interface ITasksManager {
 	public Map<String, CustomFieldValue> getTaskInstanceCustomValues(final TaskInstanceId instanceId) throws WTException;
 	public Task addTask(final TaskEx task) throws WTException;
 	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task) throws WTException;
-	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task, final BitFlag<TaskUpdateOptions> options) throws WTException;
+	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task, final BitFlags<TaskUpdateOption> options) throws WTException;
 	public void updateQuickTaskInstance(final TaskInstanceId instanceId, final Boolean completed, final Short progress, final Short importance) throws WTException;
 	public void updateQuickTaskInstance(final Collection<TaskInstanceId> instanceIds, final Boolean completed, final Short progress, final Short importance) throws WTException;
 	public void deleteTaskInstance(final TaskInstanceId instanceId) throws WTException;
@@ -158,12 +156,12 @@ public interface ITasksManager {
 		public long mask() { return this.mask; }
 	}
 	
-	public static enum TaskUpdateOptions implements BitFlagEnum {
-		ASSIGNEES(1), ATTACHMENTS(2), TAGS(4), CUSTOM_VALUES(8), CONTACT_REF(16), DOCUMENT_REF(32);
+	public static enum TaskUpdateOption implements BitFlagsEnum<TaskUpdateOption> {
+		ASSIGNEES(1 << 0), ATTACHMENTS(1 << 1), TAGS(1 << 2), CUSTOM_VALUES(1 << 3), CONTACT_REF(1 << 4), DOCUMENT_REF(1 << 5);
 		
-		private int value = 0;
-		private TaskUpdateOptions(int value) { this.value = value; }
+		private int mask = 0;
+		private TaskUpdateOption(int mask) { this.mask = mask; }
 		@Override
-		public int value() { return this.value; }
+		public long mask() { return this.mask; }
 	}
 }
