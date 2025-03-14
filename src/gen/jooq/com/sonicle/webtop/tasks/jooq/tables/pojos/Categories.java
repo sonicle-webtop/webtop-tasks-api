@@ -13,17 +13,19 @@ public class Categories implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.Integer categoryId;
-    private java.lang.String  domainId;
-    private java.lang.String  userId;
-    private java.lang.Boolean builtIn;
-    private java.lang.String  name;
-    private java.lang.String  description;
-    private java.lang.String  color;
-    private java.lang.String  sync;
-    private java.lang.Boolean isPrivate;
-    private java.lang.Boolean isDefault;
-    private java.lang.Integer reminder;
+    private java.lang.Integer      categoryId;
+    private java.lang.String       domainId;
+    private java.lang.String       userId;
+    private java.lang.Boolean      builtIn;
+    private java.lang.String       name;
+    private java.lang.String       description;
+    private java.lang.String       color;
+    private java.lang.String       sync;
+    private java.lang.Boolean      isPrivate;
+    private java.lang.Boolean      isDefault;
+    private java.lang.Integer      reminder;
+    private org.joda.time.DateTime revisionTimestamp;
+    private org.joda.time.DateTime creationTimestamp;
 
     public Categories() {}
 
@@ -39,20 +41,24 @@ public class Categories implements java.io.Serializable {
         this.isPrivate = value.isPrivate;
         this.isDefault = value.isDefault;
         this.reminder = value.reminder;
+        this.revisionTimestamp = value.revisionTimestamp;
+        this.creationTimestamp = value.creationTimestamp;
     }
 
     public Categories(
-        java.lang.Integer categoryId,
-        java.lang.String  domainId,
-        java.lang.String  userId,
-        java.lang.Boolean builtIn,
-        java.lang.String  name,
-        java.lang.String  description,
-        java.lang.String  color,
-        java.lang.String  sync,
-        java.lang.Boolean isPrivate,
-        java.lang.Boolean isDefault,
-        java.lang.Integer reminder
+        java.lang.Integer      categoryId,
+        java.lang.String       domainId,
+        java.lang.String       userId,
+        java.lang.Boolean      builtIn,
+        java.lang.String       name,
+        java.lang.String       description,
+        java.lang.String       color,
+        java.lang.String       sync,
+        java.lang.Boolean      isPrivate,
+        java.lang.Boolean      isDefault,
+        java.lang.Integer      reminder,
+        org.joda.time.DateTime revisionTimestamp,
+        org.joda.time.DateTime creationTimestamp
     ) {
         this.categoryId = categoryId;
         this.domainId = domainId;
@@ -65,6 +71,8 @@ public class Categories implements java.io.Serializable {
         this.isPrivate = isPrivate;
         this.isDefault = isDefault;
         this.reminder = reminder;
+        this.revisionTimestamp = revisionTimestamp;
+        this.creationTimestamp = creationTimestamp;
     }
 
     /**
@@ -221,6 +229,34 @@ public class Categories implements java.io.Serializable {
         this.reminder = reminder;
     }
 
+    /**
+     * Getter for <code>tasks.categories.revision_timestamp</code>.
+     */
+    public org.joda.time.DateTime getRevisionTimestamp() {
+        return this.revisionTimestamp;
+    }
+
+    /**
+     * Setter for <code>tasks.categories.revision_timestamp</code>.
+     */
+    public void setRevisionTimestamp(org.joda.time.DateTime revisionTimestamp) {
+        this.revisionTimestamp = revisionTimestamp;
+    }
+
+    /**
+     * Getter for <code>tasks.categories.creation_timestamp</code>.
+     */
+    public org.joda.time.DateTime getCreationTimestamp() {
+        return this.creationTimestamp;
+    }
+
+    /**
+     * Setter for <code>tasks.categories.creation_timestamp</code>.
+     */
+    public void setCreationTimestamp(org.joda.time.DateTime creationTimestamp) {
+        this.creationTimestamp = creationTimestamp;
+    }
+
     @Override
     public String toString() {
         java.lang.StringBuilder sb = new java.lang.StringBuilder("Categories (");
@@ -236,6 +272,8 @@ public class Categories implements java.io.Serializable {
         sb.append(", ").append(isPrivate);
         sb.append(", ").append(isDefault);
         sb.append(", ").append(reminder);
+        sb.append(", ").append(revisionTimestamp);
+        sb.append(", ").append(creationTimestamp);
 
         sb.append(")");
         return sb.toString();

@@ -15,4 +15,14 @@ public class Sequences {
      * The sequence <code>tasks.seq_categories</code>
      */
     public static final org.jooq.Sequence<java.lang.Long> SEQ_CATEGORIES = org.jooq.impl.Internal.createSequence("seq_categories", com.sonicle.webtop.tasks.jooq.Tasks.TASKS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+
+    /**
+     * The sequence <code>tasks.seq_history_categories</code>
+     */
+    public static final org.jooq.Sequence<java.lang.Long> SEQ_HISTORY_CATEGORIES = org.jooq.impl.Internal.createSequence("seq_history_categories", com.sonicle.webtop.tasks.jooq.Tasks.TASKS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+
+    /**
+     * The sequence <code>tasks.seq_history_tasks</code>
+     */
+    public static final org.jooq.Sequence<java.lang.Long> SEQ_HISTORY_TASKS = org.jooq.impl.Internal.createSequence("seq_history_tasks", com.sonicle.webtop.tasks.jooq.Tasks.TASKS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 }

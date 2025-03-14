@@ -81,6 +81,16 @@ public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks
      */
     public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord, java.lang.Integer> REMINDER = createField(org.jooq.impl.DSL.name("reminder"), org.jooq.impl.SQLDataType.INTEGER, this, "");
 
+    /**
+     * The column <code>tasks.categories.revision_timestamp</code>.
+     */
+    public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord, org.joda.time.DateTime> REVISION_TIMESTAMP = createField(org.jooq.impl.DSL.name("revision_timestamp"), org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "", new com.sonicle.jooq.jsr310.OffsetDateTimeJodaConverter());
+
+    /**
+     * The column <code>tasks.categories.creation_timestamp</code>.
+     */
+    public final org.jooq.TableField<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord, org.joda.time.DateTime> CREATION_TIMESTAMP = createField(org.jooq.impl.DSL.name("creation_timestamp"), org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "", new com.sonicle.jooq.jsr310.OffsetDateTimeJodaConverter());
+
     private Categories(org.jooq.Name alias, org.jooq.Table<com.sonicle.webtop.tasks.jooq.tables.records.CategoriesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -161,11 +171,11 @@ public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.tasks
     }
 
     // -------------------------------------------------------------------------
-    // Row11 type methods
+    // Row13 type methods
     // -------------------------------------------------------------------------
 
     @java.lang.Override
-    public org.jooq.Row11<java.lang.Integer, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Integer> fieldsRow() {
-        return (org.jooq.Row11) super.fieldsRow();
+    public org.jooq.Row13<java.lang.Integer, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Integer, org.joda.time.DateTime, org.joda.time.DateTime> fieldsRow() {
+        return (org.jooq.Row13) super.fieldsRow();
     }
 }

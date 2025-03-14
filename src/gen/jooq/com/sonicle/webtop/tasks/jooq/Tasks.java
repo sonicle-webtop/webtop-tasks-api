@@ -29,6 +29,16 @@ public class Tasks extends org.jooq.impl.SchemaImpl {
     public final com.sonicle.webtop.tasks.jooq.tables.CategoryProps CATEGORY_PROPS = com.sonicle.webtop.tasks.jooq.tables.CategoryProps.CATEGORY_PROPS;
 
     /**
+     * The table <code>tasks.history_categories</code>.
+     */
+    public final com.sonicle.webtop.tasks.jooq.tables.HistoryCategories HISTORY_CATEGORIES = com.sonicle.webtop.tasks.jooq.tables.HistoryCategories.HISTORY_CATEGORIES;
+
+    /**
+     * The table <code>tasks.history_tasks</code>.
+     */
+    public final com.sonicle.webtop.tasks.jooq.tables.HistoryTasks HISTORY_TASKS = com.sonicle.webtop.tasks.jooq.tables.HistoryTasks.HISTORY_TASKS;
+
+    /**
      * The table <code>tasks.tasks</code>.
      */
     public final com.sonicle.webtop.tasks.jooq.tables.Tasks TASKS_ = com.sonicle.webtop.tasks.jooq.tables.Tasks.TASKS_;
@@ -89,7 +99,9 @@ public class Tasks extends org.jooq.impl.SchemaImpl {
     @java.lang.Override
     public final java.util.List<org.jooq.Sequence<?>> getSequences() {
         return java.util.Arrays.<org.jooq.Sequence<?>>asList(
-            com.sonicle.webtop.tasks.jooq.Sequences.SEQ_CATEGORIES);
+            com.sonicle.webtop.tasks.jooq.Sequences.SEQ_CATEGORIES,
+            com.sonicle.webtop.tasks.jooq.Sequences.SEQ_HISTORY_CATEGORIES,
+            com.sonicle.webtop.tasks.jooq.Sequences.SEQ_HISTORY_TASKS);
     }
 
     @java.lang.Override
@@ -97,6 +109,8 @@ public class Tasks extends org.jooq.impl.SchemaImpl {
         return java.util.Arrays.<org.jooq.Table<?>>asList(
             com.sonicle.webtop.tasks.jooq.tables.Categories.CATEGORIES,
             com.sonicle.webtop.tasks.jooq.tables.CategoryProps.CATEGORY_PROPS,
+            com.sonicle.webtop.tasks.jooq.tables.HistoryCategories.HISTORY_CATEGORIES,
+            com.sonicle.webtop.tasks.jooq.tables.HistoryTasks.HISTORY_TASKS,
             com.sonicle.webtop.tasks.jooq.tables.Tasks.TASKS_,
             com.sonicle.webtop.tasks.jooq.tables.TasksAssignees.TASKS_ASSIGNEES,
             com.sonicle.webtop.tasks.jooq.tables.TasksAttachments.TASKS_ATTACHMENTS,

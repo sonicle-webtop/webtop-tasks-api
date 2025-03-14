@@ -33,15 +33,12 @@
 package com.sonicle.webtop.tasks;
 
 import com.google.gson.annotations.SerializedName;
-import com.sonicle.webtop.tasks.model.TaskQuery;
-import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.tasks.model.Category;
 import com.sonicle.webtop.tasks.model.CategoryPropSet;
 import com.sonicle.webtop.tasks.model.Task;
 import com.sonicle.webtop.tasks.model.TaskAttachmentWithBytes;
 import com.sonicle.webtop.tasks.model.TaskObject;
-import com.sonicle.webtop.tasks.model.TaskObjectChanged;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +49,9 @@ import com.sonicle.commons.flags.BitFlags;
 import com.sonicle.commons.flags.BitFlagsEnum;
 import com.sonicle.commons.time.InstantRange;
 import com.sonicle.webtop.core.app.model.FolderSharing;
+import com.sonicle.webtop.core.app.sdk.WTParseException;
 import com.sonicle.webtop.core.model.CustomFieldValue;
+import com.sonicle.webtop.core.model.Delta;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import com.sonicle.webtop.tasks.model.CategoryBase;
 import com.sonicle.webtop.tasks.model.CategoryFSFolder;
@@ -61,6 +60,7 @@ import com.sonicle.webtop.tasks.model.TaskEx;
 import com.sonicle.webtop.tasks.model.TaskInstance;
 import com.sonicle.webtop.tasks.model.TaskInstanceId;
 import com.sonicle.webtop.tasks.model.TaskLookupInstance;
+import com.sonicle.webtop.tasks.model.TaskQuery;
 import java.util.Set;
 import org.joda.time.DateTimeZone;
 
@@ -98,8 +98,9 @@ public interface ITasksManager {
 	public Map<Integer, CategoryPropSet> getCategoriesCustomProps(final Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(final int categoryId, CategoryPropSet propertySet) throws WTException;
 	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final DateTimeZone targetTimezone) throws WTException;
-	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
-	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final InstantRange viewRange, final Condition<TaskQuery> conditionPredicate, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
+	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final Condition<TaskQuery> filterQuery, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
+	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final InstantRange viewRange, final Condition<TaskQuery> filterQuery, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
+	public List<TaskLookupInstance> listTaskInstances(final Collection<Integer> categoryIds, final TaskListView view, final InstantRange viewRange, final String filterQuery, final SortInfo sortInfo, final DateTimeZone targetTimezone) throws WTException;
 	public TaskInstance getTaskInstance(final TaskInstanceId instanceId) throws WTException;
 	public TaskInstance getTaskInstance(final TaskInstanceId instanceId, final BitFlags<TaskGetOption> options) throws WTException;
 	public TaskAttachmentWithBytes getTaskInstanceAttachment(final TaskInstanceId instanceId, final String attachmentId) throws WTException;
@@ -116,7 +117,8 @@ public interface ITasksManager {
 	public void updateTaskInstanceTags(final UpdateTagsOperation operation, final Collection<TaskInstanceId> instanceIds, final Set<String> tagIds) throws WTException;
 	public void updateTaskCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public List<TaskObject> listTaskObjects(int categoryId, TaskObjectOutputType outputType) throws WTException;
-	public LangUtils.CollectionChangeSet<TaskObjectChanged> listTaskObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
+	public Delta<TaskObject> listTasksDelta(final int categoryId, final String syncToken, final TaskObjectOutputType outputType) throws WTParseException, WTException;
+	public Delta<TaskObject> listTasksDelta(final int categoryId, final DateTime since, final TaskObjectOutputType outputType) throws WTException;
 	public List<TaskObject> getTaskObjects(final int categoryId, final Collection<String> hrefs, final TaskObjectOutputType outputType) throws WTException;
 	public TaskObject getTaskObject(final int categoryId, final String href, final TaskObjectOutputType outputType) throws WTException;
 	//public TaskObjectWithICalendar getTaskObjectWithICalendar(int categoryId, String href) throws WTException;

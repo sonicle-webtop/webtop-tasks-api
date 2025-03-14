@@ -141,4 +141,9 @@ public class CategoryBase {
 		@SerializedName("R") READ,
 		@SerializedName("W") WRITE
 	}
+	
+	public static enum Visibility {
+		@SerializedName("PU") NORMAL, //aka PUBLIC
+		@SerializedName("PR") PRIVATE
+	}
 }

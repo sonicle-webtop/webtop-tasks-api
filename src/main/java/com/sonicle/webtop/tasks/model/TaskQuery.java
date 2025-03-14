@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sonicle S.r.l.
+ * Copyright (C) 2025 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,175 +28,142 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2019 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2025 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.model;
 
-import com.sonicle.commons.EnumUtils;
-import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.qbuilders.properties.concrete.BooleanProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.InstantProperty;
+import com.sonicle.commons.qbuilders.properties.concrete.IntegerProperty;
+import com.sonicle.commons.qbuilders.properties.concrete.ShortProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.StringProperty;
-import com.sonicle.commons.time.DateTimeUtils;
-import com.sonicle.commons.web.json.CId;
-import com.sonicle.commons.web.json.bean.QueryObj;
-import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
-import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
-import com.sonicle.webtop.core.model.CustomField;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTimeZone;
+import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCFields;
 
 /**
  *
  * @author malbinola
  */
-public class TaskQuery extends QueryBuilderWithCValues<TaskQuery> {
-
+public class TaskQuery extends QueryBuilderWithCFields<TaskQuery> {
+	public static final String ID = "id";
+	public static final String CREATED_ON = "createdOn";
+	public static final String UPDATED_ON = "updatedOn";
+	public static final String PRIVATE = "private";
+	public static final String SUBJECT = "subject";
+	public static final String LOCATION = "location";
+	public static final String DESCRIPTION = "description";
+	public static final String TIMEZONE = "timezone";
+	public static final String START = "start";
+	public static final String DUE = "due";
+	public static final String COMPLETED_ON = "copletedOn";
+	public static final String PROGRESS = "progress";
+	public static final String STATUS = "status";
+	public static final String IMPORTANCE = "importance";
+	public static final String REFERENCE = "reference";
+	public static final String REMINDER = "reminder";
+	public static final String ORGANIZER = "organizer";
+	public static final String ORGANIZER_ID = "organizerId";
+	public static final String PARENT_ID = "parentId";
+	//public static final String CONTACT = "contact";
+	//public static final String CONTACT_ID = "contactId";
+	//public static final String COMPANY = "company";
+	//public static final String COMPANY_ID = "companyId";
+	public static final String TAG_ID = "tagId";
+	
+	public StringProperty<TaskQuery> id() {
+		return string(ID);
+	}
+	
+	public InstantProperty<TaskQuery> createdOn() {
+		return instant(CREATED_ON);
+	}
+	
+	public InstantProperty<TaskQuery> updatedOn() {
+		return instant(UPDATED_ON);
+	}
+	
+	public BooleanProperty<TaskQuery> isPrivate() {
+		return bool(PRIVATE);
+	}
+	
 	public StringProperty<TaskQuery> subject() {
-		return string("subject");
+		return string(SUBJECT);
 	}
 	
 	public StringProperty<TaskQuery> location() {
-		return string("location");
+		return string(LOCATION);
 	}
-
+	
 	public StringProperty<TaskQuery> description() {
-		return string("description");
+		return string(DESCRIPTION);
 	}
-
-	public InstantProperty<TaskQuery> after() {
-		return instant("after");
+	
+	public StringProperty<TaskQuery> timezone() {
+		return string(TIMEZONE);
 	}
-
-	public InstantProperty<TaskQuery> before() {
-		return instant("before");
+	
+	public InstantProperty<TaskQuery> start() {
+		return instant(START);
 	}
-
-	public BooleanProperty<TaskQuery> isPrivate() {
-		return bool("private");
+	
+	public InstantProperty<TaskQuery> due() {
+		return instant(DUE);
+	}
+	
+	public InstantProperty<TaskQuery> completedOn() {
+		return instant(COMPLETED_ON);
+	}
+	
+	public ShortProperty<TaskQuery> progress() {
+		return shortNum(PROGRESS);
 	}
 	
 	public StringProperty<TaskQuery> status() {
-		return string("status");
+		return string(STATUS);
 	}
 	
-	public BooleanProperty<TaskQuery> isDone() {
-		return bool("done");
+	public ShortProperty<TaskQuery> importance() {
+		return shortNum(IMPORTANCE);
+	}
+	
+	public StringProperty<TaskQuery> reference() {
+		return string(REFERENCE);
+	}
+	
+	public IntegerProperty<TaskQuery> reminder() {
+		return intNum(REMINDER);
+	}
+	
+	public StringProperty<TaskQuery> organizer() {
+		return string(ORGANIZER);
+	}
+	
+	public StringProperty<TaskQuery> organizerId() {
+		return string(ORGANIZER_ID);
+	}
+	
+	public StringProperty<TaskQuery>parentId() {
+		return string(PARENT_ID);
 	}
 	
 	/*
-	public BooleanProperty<TaskQuery> isStarted() {
-		return bool("started");
+	public StringProperty<TaskQueryNEW> contact() {
+		return string(CONTACT);
 	}
 	
-	public BooleanProperty<TaskQuery> isLate() {
-		return bool("late");
+	public StringProperty<TaskQueryNEW> contactId() {
+		return string(CONTACT_ID);
+	}
+	
+	public StringProperty<TaskQueryNEW> company() {
+		return string(COMPANY);
+	}
+	
+	public StringProperty<TaskQueryNEW> companyId() {
+		return string(COMPANY_ID);
 	}
 	*/
 	
-	public StringProperty<TaskQuery> document() {
-		return string("document");
-	}
-
-	public StringProperty<TaskQuery> any() {
-		return string("any");
-	}
-	
-	public StringProperty<TaskQuery> tag() {
-		return string("tag");
-	}
-	
-	public StringProperty<TaskQuery> parent() {
-		return string("parent");
-	}
-
-	public static Condition<TaskQuery> createCondition(String pattern) {
-		if (!StringUtils.isBlank(pattern)) {
-			return new TaskQuery().any().eq(StringUtils.replace(pattern, "%", "*"));
-		} else {
-			return null;
-		}
-	}
-	
-	public static Condition<TaskQuery> createCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
-		boolean smartStringComparison = true;
-		
-		Condition<TaskQuery> last = new TaskQuery().trueCondition();
-		for (Map.Entry<QueryObj.Condition, List<String>> entry : query.groupConditions(Arrays.asList("is")).entrySet()) {
-			final QueryObj.Condition key = entry.getKey();
-			final List<String> values = entry.getValue();
-			
-			if (values.isEmpty() || values.size() == 1) {
-				last = new TaskQuery().and(last, createCondition(key, values.isEmpty() ? null : values.get(0), customFieldTypeMapping, timezone, smartStringComparison));
-			} else {
-				List<Condition<TaskQuery>> conds = new ArrayList<>();
-				for (String value : entry.getValue()) {
-					conds.add(createCondition(key, value, customFieldTypeMapping, timezone, smartStringComparison));
-				}
-				last = new TaskQuery().and(last, new TaskQuery().or(conds));
-			}
-		}
-		
-		if (!StringUtils.isBlank(query.getAllText())) {
-			return new TaskQuery().and(last, new TaskQuery().any().eq(asStringValue(query.getAllText(), smartStringComparison)));
-		} else {
-			return last;
-		}
-	}
-	
-	private static Condition<TaskQuery> createCondition(QueryObj.Condition condition, String value, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone, boolean smartStringComparison) {
-		if ("subject".equals(condition.keyword)) {
-			return new TaskQuery().subject().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("location".equals(condition.keyword)) {
-			return new TaskQuery().location().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("description".equals(condition.keyword)) {
-			return new TaskQuery().description().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("after".equals(condition.keyword)) {
-			String after = StringUtils.replace(value, "/", "-");
-			return new TaskQuery().after().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(after), DateTimeUtils.toZoneId(timezone)));
-
-		} else if ("before".equals(condition.keyword)) {
-			String before = StringUtils.replace(value, "/", "-");
-			return new TaskQuery().before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone)));
-
-		} else if ("status".equals(condition.keyword)) {
-			if (EnumUtils.forSerializedName(value, TaskBase.Status.class)== null) {
-				throw new UnsupportedOperationException(condition.keyword + ":" + value);
-			}
-			return new TaskQuery().status().eq(value);
-
-		} else if ("private".equals(condition.keyword)) {
-			return condition.negated ? new TaskQuery().isPrivate().isFalse() : new TaskQuery().isPrivate().isTrue();
-
-		} else if ("done".equals(condition.keyword)) {
-			return condition.negated ? new TaskQuery().isDone().isFalse() : new TaskQuery().isDone().isTrue();
-
-		} else if ("tag".equals(condition.keyword)) {
-			return new TaskQuery().tag().eq(value);
-
-		} else if ("parent".equals(condition.keyword)) {
-			return new TaskQuery().parent().eq(value);
-
-		} else if ("doc".equals(condition.keyword)) {
-			return new TaskQuery().document().eq(asStringValue(value, smartStringComparison));
-
-		} else if (StringUtils.startsWith(condition.keyword, "cfield")) {
-			CId cf = new CId(condition.keyword, 2);
-			if (!cf.isTokenEmpty(1)) {
-				String cfId = cf.getToken(1);
-				if (customFieldTypeMapping.containsKey(cfId)) {
-					return new TaskQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), value, condition.negated, smartStringComparison, timezone);
-				}
-			}
-		}
-		
-		throw new WTUnsupportedOperationException("Unsupported keyword '{}'", condition.keyword);
+	public StringProperty<TaskQuery> tagId() {
+		return string(TAG_ID);
 	}
 }

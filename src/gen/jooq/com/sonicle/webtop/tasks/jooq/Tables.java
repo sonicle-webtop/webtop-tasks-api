@@ -22,6 +22,16 @@ public class Tables {
     public static final com.sonicle.webtop.tasks.jooq.tables.CategoryProps CATEGORY_PROPS = com.sonicle.webtop.tasks.jooq.tables.CategoryProps.CATEGORY_PROPS;
 
     /**
+     * The table <code>tasks.history_categories</code>.
+     */
+    public static final com.sonicle.webtop.tasks.jooq.tables.HistoryCategories HISTORY_CATEGORIES = com.sonicle.webtop.tasks.jooq.tables.HistoryCategories.HISTORY_CATEGORIES;
+
+    /**
+     * The table <code>tasks.history_tasks</code>.
+     */
+    public static final com.sonicle.webtop.tasks.jooq.tables.HistoryTasks HISTORY_TASKS = com.sonicle.webtop.tasks.jooq.tables.HistoryTasks.HISTORY_TASKS;
+
+    /**
      * The table <code>tasks.tasks</code>.
      */
     public static final com.sonicle.webtop.tasks.jooq.tables.Tasks TASKS_ = com.sonicle.webtop.tasks.jooq.tables.Tasks.TASKS_;
