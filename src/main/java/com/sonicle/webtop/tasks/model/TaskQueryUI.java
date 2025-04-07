@@ -91,7 +91,7 @@ public class TaskQueryUI extends TaskQuery {
 	
 	public static Condition<TaskQuery> build(String pattern) {
 		if (!StringUtils.isBlank(pattern)) {
-			return new TaskQueryUI().any().eq(StringUtils.replace(pattern, "%", "*"));
+			return new TaskQueryUI().any().like(StringUtils.replace(pattern, "%", "*"));
 		} else {
 			return null;
 		}
@@ -116,7 +116,7 @@ public class TaskQueryUI extends TaskQuery {
 		
 		if (!StringUtils.isBlank(query.getAllText())) {
 			String[] values = asStringValues(query.getAllText(), true);
-			return new TaskQueryUI().and(last, combineFieldValuesAsCondition(values, v -> new TaskQueryUI().any().eq(v)));
+			return new TaskQueryUI().and(last, combineFieldValuesAsCondition(values, v -> new TaskQueryUI().any().like(v)));
 		} else {
 			return last;
 		}
