@@ -37,7 +37,7 @@ import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.qbuilders.properties.concrete.BooleanProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.InstantProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.StringProperty;
-import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.commons.time.JavaTimeUtils;
 import com.sonicle.commons.web.json.CId;
 import com.sonicle.commons.web.json.bean.QueryObj;
 import com.sonicle.webtop.core.app.sdk.QueryBuilder;
@@ -146,11 +146,11 @@ public class TaskQueryUI extends TaskQuery {
 
 		} else if ("after".equals(condition.keyword)) {
 			String after = StringUtils.replace(value, "/", "-");
-			return new TaskQueryUI().after().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(after), DateTimeUtils.toZoneId(timezone)));
+			return new TaskQueryUI().after().eq(JavaTimeUtils.toInstant(JavaTimeUtils.parseLocalDateYMD(after), JavaTimeUtils.toZoneId(timezone)));
 
 		} else if ("before".equals(condition.keyword)) {
 			String before = StringUtils.replace(value, "/", "-");
-			return new TaskQueryUI().before().eq(DateTimeUtils.toInstant(DateTimeUtils.parseLocalDate(before), DateTimeUtils.toZoneId(timezone)));
+			return new TaskQueryUI().before().eq(JavaTimeUtils.toInstant(JavaTimeUtils.parseLocalDateYMD(before), JavaTimeUtils.toZoneId(timezone)));
 
 		} else if ("status".equals(condition.keyword)) {
 			if (EnumUtils.forSerializedName(value, TaskBase.Status.class) == null) {

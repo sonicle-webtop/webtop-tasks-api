@@ -33,7 +33,7 @@
 package com.sonicle.webtop.tasks.model;
 
 import com.sonicle.commons.LangUtils;
-import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.commons.time.JodaTimeUtils;
 import com.sonicle.commons.web.json.CId;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
@@ -69,7 +69,7 @@ public class TaskInstanceId extends CId {
 		if (hasNoInstance()) {
 			return null;
 		} else {
-			return DateTimeUtils.parseDateTime(DateTimeUtils.createFormatter("yyyyMMdd", DateTimeZone.UTC), getInstance()).toLocalDate();
+			return JodaTimeUtils.parseDateTime(JodaTimeUtils.createFormatter("yyyyMMdd", DateTimeZone.UTC), getInstance()).toLocalDate();
 		}
 	}
 
@@ -86,12 +86,12 @@ public class TaskInstanceId extends CId {
 	}
 	
 	public static TaskInstanceId build(final String taskId, final DateTime instance, final DateTimeZone timezone) {
-		return build(taskId, DateTimeUtils.print(DateTimeUtils.createFormatter("yyyyMMdd", timezone), instance));
+		return build(taskId, JodaTimeUtils.print(JodaTimeUtils.createFormatter("yyyyMMdd", timezone), instance));
 	}
 	
 	/* Avoid UTC usage
 	public static TaskInstanceId build(final String taskId, final DateTime instance) {
-		return build(taskId, DateTimeUtils.print(DateTimeUtils.createFormatter("yyyyMMdd", DateTimeZone.UTC), instance));
+		return build(taskId, JodaTimeUtils.print(JodaTimeUtils.createFormatter("yyyyMMdd", DateTimeZone.UTC), instance));
 	}
 	*/
 	
