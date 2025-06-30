@@ -32,6 +32,8 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
@@ -100,9 +102,6 @@ public class TaskAttachment {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(getAttachmentId())
-			.append(getFilename())
-			.append(getSize())
-			.append(getMediaType())
 			.toHashCode();
 	}
 	
@@ -114,5 +113,14 @@ public class TaskAttachment {
 		return new EqualsBuilder()
 			.append(getAttachmentId(), otherObject.getAttachmentId())
 			.isEquals();
+	}
+	
+	public static List<TaskAttachment> asListOfTaskAttachmentsWithInputRef(List<TaskAttachment> attachmentsToClone) {
+		if (attachmentsToClone == null || attachmentsToClone.isEmpty()) return attachmentsToClone;
+		ArrayList<TaskAttachment> items = new ArrayList<>(attachmentsToClone.size());
+		for (TaskAttachment attachment : attachmentsToClone) {
+			items.add(new TaskAttachmentWithInputRef(attachment));
+		}
+		return items;
 	}
 }

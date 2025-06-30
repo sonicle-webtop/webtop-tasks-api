@@ -113,7 +113,9 @@ public interface ITasksManager {
 	public void deleteTaskInstance(final TaskInstanceId instanceId) throws WTException;
 	public void deleteTaskInstance(final Collection<TaskInstanceId> instanceIds) throws WTException;
 	public void moveTaskInstance(final MoveCopyMode copyMode, final TaskInstanceId instanceId, final int targetCategoryId) throws WTException;
+	public void moveTaskInstance(final MoveCopyMode copyMode, final TaskInstanceId instanceId, final int targetCategoryId, final BitFlags<TaskGetOption> copyOptions) throws WTException;
 	public void moveTaskInstance(final MoveCopyMode copyMode, final Collection<TaskInstanceId> instanceIds, final int targetCategoryId) throws WTException;
+	public void moveTaskInstance(final MoveCopyMode copyMode, final Collection<TaskInstanceId> instanceIds, final int targetCategoryId, final BitFlags<TaskGetOption> copyOptions) throws WTException;
 	public void updateTaskInstanceTags(final UpdateTagsOperation operation, final Collection<TaskInstanceId> instanceIds, final Set<String> tagIds) throws WTException;
 	public void updateTaskCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public List<TaskObject> listTaskObjects(int categoryId, TaskObjectOutputType outputType) throws WTException;
