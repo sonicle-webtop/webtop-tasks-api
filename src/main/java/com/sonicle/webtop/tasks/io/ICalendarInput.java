@@ -113,11 +113,11 @@ public class ICalendarInput implements TasksStreamReader {
 	}
 	
 	@Override
-	public List<TaskInput> read(InputStream is) throws IOException, WTException {
+	public List<TaskInput> read(final InputStream is) throws IOException, WTException {
 		return parseICalendar(is);
 	}
 	
-	public ArrayList<TaskInput> parseICalendar(InputStream is) throws IOException, WTException {
+	public ArrayList<TaskInput> parseICalendar(final InputStream is) throws IOException, WTException {
 		try {
 			return parseToDoObjects(ICalendarUtils.parse(is));
 		} catch (ParserException ex) {
@@ -125,7 +125,7 @@ public class ICalendarInput implements TasksStreamReader {
 		}	
 	}
 	
-	public ArrayList<TaskInput> parseToDoObjects(Calendar calendar) throws WTException {
+	public ArrayList<TaskInput> parseToDoObjects(final Calendar calendar) throws WTException {
 		// http://www.kanzaki.com/docs/ical/
 		ArrayList<TaskInput> results = new ArrayList<>();
 		
@@ -167,11 +167,11 @@ public class ICalendarInput implements TasksStreamReader {
 		return results;
 	}
 	
-	public TaskInput parseToDoObject(VToDo vtodo) throws WTException {
+	public TaskInput parseToDoObject(final VToDo vtodo) throws WTException {
 		return parseToDoObject(vtodo, null);
 	}
 	
-	private TaskInput parseToDoObject(VToDo vtodo, LogHandler logHandler) throws WTException {
+	private TaskInput parseToDoObject(final VToDo vtodo, final LogHandler logHandler) throws WTException {
 		// https://www.kanzaki.com/docs/ical/vtodo.html
 		TaskBase task = new TaskBase();
 		TaskRecurrence taskRecurrence = null;
@@ -281,7 +281,7 @@ public class ICalendarInput implements TasksStreamReader {
 		// https://www.kanzaki.com/docs/ical/class.html
 		// https://appgenix.uservoice.com/forums/280499-business-calendar-2/suggestions/18698599-i-would-like-to-see-another-privacy-option-confid
 		String clazz = ICal4jUtils.getPropertyValue(vtodo.getClassification());
-		if (!StringUtils.isBlank(location)) {
+		if (!StringUtils.isBlank(clazz)) {
 			// CONFIDENTIAL or PRIVATE are private synonyms
 			task.setIsPrivate(StringUtils.equals(clazz, Clazz.CONFIDENTIAL.getValue()) || StringUtils.equals(clazz, Clazz.PRIVATE.getValue()));
 		} else {
@@ -319,7 +319,7 @@ public class ICalendarInput implements TasksStreamReader {
 		return new TaskInput(task, taskRecurrence, recurringRefs, tagNames, relatedToUid, extraProps, returnCalendarObject ? vtodo : null);
 	}
 	
-	public static String toTaskOrganizer(Organizer organizer) {
+	public static String toTaskOrganizer(final Organizer organizer) {
 		// http://www.kanzaki.com/docs/ical/organizer.html
 		
 		if (organizer != null) {
@@ -336,7 +336,7 @@ public class ICalendarInput implements TasksStreamReader {
 		return null;
 	}
 	
-	public static TaskBase.Status toTaskStatus(Status status) {
+	public static TaskBase.Status toTaskStatus(final Status status) {
 		// https://www.kanzaki.com/docs/ical/status.html
 		/*
 			Implemented mapping:
@@ -361,7 +361,7 @@ public class ICalendarInput implements TasksStreamReader {
 		}
 	}
 	
-	public static int toTaskPriority(Priority priority) {
+	public static int toTaskPriority(final Priority priority) {
 		// https://www.kanzaki.com/docs/ical/priority.html
 		/*
 			There are 3 schemes:

@@ -83,6 +83,14 @@ public class TaskRecurrence {
 		this.excludedDates = excludedDates;
 	}
 	
+	public boolean hasExcludedDates() {
+		return (this.excludedDates != null) && (!this.excludedDates.isEmpty());
+	}
+	
+	public Set<LocalDate> getExcludedDatesOrEmpty() {
+		return this.excludedDates != null ? excludedDates : new LinkedHashSet<>(0);
+	}
+	
 	public void addExcludedDates(Set<LocalDate> excludedDates) {
 		if (this.excludedDates == null) {
 			this.excludedDates = new LinkedHashSet<>(excludedDates);

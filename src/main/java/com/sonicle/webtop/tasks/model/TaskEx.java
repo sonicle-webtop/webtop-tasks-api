@@ -173,4 +173,16 @@ public class TaskEx extends TaskBase {
 	public boolean isChild() {
 		return getParentInstanceId() != null;
 	}
+	
+	//TODO: should we censorize here?
+	/*
+	@Override
+	public void censorize() {
+		setTags(null);
+		setAssignees(null);
+		setAttachments(null);
+		setCustomValues((Map<String, CustomFieldValue>)null);
+		super.censorize();
+	}
+	*/
 }
