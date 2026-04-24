@@ -34,6 +34,7 @@ package com.sonicle.webtop.tasks.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.InternetAddressUtils;
+import com.sonicle.commons.time.JodaTimeUtils;
 import jakarta.mail.internet.InternetAddress;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,6 +42,9 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 /**
  *
@@ -317,18 +321,26 @@ public class TaskBase {
 		return this.censorized;
 	}
 	
-	public void prependToSubject(String prefix) {
-		String subj = getSubject();
-		if (!StringUtils.isBlank(prefix) && !StringUtils.isBlank(subj)) {
-			setSubject(prefix + " " + subj);	
-		}
-	}
-	
 	public void censorize() {
 		this.setSubject("(***)");
 		this.setDescription("");
 		this.setReminder(null);
 		this.censorized = true;		
+	}
+	
+	public void prependToSubject(String prefix) {
+		String subj = getSubject();
+		if (!StringUtils.isBlank(prefix) && !StringUtils.isBlank(subj)) {
+			setSubject(prefix + " " + subj);
+		}
+	}
+	
+	public void recalculateStartDueForInstance(LocalDate instanceDate) {
+		Integer dueDays = (getDue() != null) ?  JodaTimeUtils.daysBetween(getStart().toLocalDate(), getDue().toLocalDate(), true) : null;
+		setStart(JodaTimeUtils.toDateTime(instanceDate, getStart().toLocalTime(), getTimezoneObject(), false));
+		if (dueDays != null) {
+			setDue(JodaTimeUtils.toDateTime(instanceDate.plusDays(dueDays), getDue().toLocalTime(), getTimezoneObject(), false));
+		}
 	}
 	
 	public static enum RevisionStatus {

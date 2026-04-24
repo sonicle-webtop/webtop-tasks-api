@@ -108,8 +108,8 @@ public interface ITasksManager {
 	public Task addTask(final TaskEx task) throws WTException;
 	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task) throws WTException;
 	public void updateTaskInstance(final TaskInstanceId instanceId, final TaskEx task, final BitFlags<TaskUpdateOption> options) throws WTException;
-	public void updateQuickTaskInstance(final TaskInstanceId instanceId, final Boolean completed, final Short progress, final Short importance) throws WTException;
-	public void updateQuickTaskInstance(final Collection<TaskInstanceId> instanceIds, final Boolean completed, final Short progress, final Short importance) throws WTException;
+	public void updateTaskInstanceQuick(final TaskInstanceId instanceId, final Boolean newCompleted, final Short newProgress, final Short newImportance) throws WTException;
+	public void updateTaskInstanceQuick(final Collection<TaskInstanceId> instanceIds, final Boolean newCompleted, final Short newProgress, final Short newImportance) throws WTException;
 	public void deleteTaskInstance(final TaskInstanceId instanceId) throws WTException;
 	public void deleteTaskInstance(final Collection<TaskInstanceId> instanceIds) throws WTException;
 	public void moveTaskInstance(final MoveCopyMode copyMode, final TaskInstanceId instanceId, final int targetCategoryId) throws WTException;

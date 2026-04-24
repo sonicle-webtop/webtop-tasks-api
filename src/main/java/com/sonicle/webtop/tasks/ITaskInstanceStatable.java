@@ -40,6 +40,6 @@ import com.sonicle.webtop.tasks.model.TaskInstanceId;
  */
 public interface ITaskInstanceStatable {
 	public TaskInstanceId getId();
-	public String getTaskId();
+	public String getOriginalTaskId();
 	public Boolean getHasRecurrence();
 }

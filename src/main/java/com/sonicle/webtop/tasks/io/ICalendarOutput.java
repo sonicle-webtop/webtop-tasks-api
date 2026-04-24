@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sonicle S.r.l.
+ * Copyright (C) 2026 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,21 +28,28 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2021 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2026 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.io;
 
+import com.sonicle.commons.ClassUtils;
 import com.sonicle.commons.LangUtils;
+import com.sonicle.webtop.core.app.ical4j.XCustomFieldValue;
+import com.sonicle.webtop.core.app.ical4j.XTag;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
 import com.sonicle.webtop.core.app.util.log.LogHandler;
 import com.sonicle.webtop.core.app.util.log.LogMessage;
+import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.ICal4jUtils;
 import com.sonicle.webtop.core.util.ICalendarUtils;
+import com.sonicle.webtop.tasks.model.TaskAttachment;
+import com.sonicle.webtop.tasks.model.TaskAttachmentWithBytes;
 import com.sonicle.webtop.tasks.model.TaskBase;
 import com.sonicle.webtop.tasks.model.TaskEx;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -50,10 +57,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.component.VToDo;
+import net.fortuna.ical4j.model.parameter.Encoding;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.model.parameter.XParameter;
+import net.fortuna.ical4j.model.property.Attach;
 import net.fortuna.ical4j.model.property.Categories;
 import net.fortuna.ical4j.model.property.Clazz;
 import net.fortuna.ical4j.model.property.Completed;
@@ -71,6 +83,7 @@ import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.XProperty;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
@@ -82,21 +95,39 @@ import org.joda.time.LocalTime;
  */
 public class ICalendarOutput {
 	private final String prodId;
-	private TagsMappingMode tagsMappingMode = TagsMappingMode.NAME;
-	private Map<String, String> tagNamesByIdMap = null;
+	private Map<String, String> tagNamesById = null;
+	private TagsMappingMode categoriesMappingMode = TagsMappingMode.NAME;
+	private boolean ignoreCategories = false;
+	private boolean ignoreAttachments = false;
+	private boolean ignoreCustomValues = false;
 	private LogHandler logHandler = null;
 	
 	public ICalendarOutput(String prodId) {
 		this.prodId = Check.notNull(prodId, "prodId");
 	}
 	
-	public ICalendarOutput withTagsMappingMode(TagsMappingMode tagsMappingMode) {
-		this.tagsMappingMode = Check.notNull(tagsMappingMode, "tagsMappingMode");
+	public ICalendarOutput(String prodId, Map<String, String> tagNamesById) {
+		this(prodId);
+		this.tagNamesById = tagNamesById;
+	}
+	
+	public ICalendarOutput withCategoriesMappingMode(TagsMappingMode categoriesMappingMode) {
+		this.categoriesMappingMode = Check.notNull(categoriesMappingMode, "categoriesMappingMode");
 		return this;
 	}
 	
-	public ICalendarOutput withTagNamesByIdMap(Map<String, String> tagNamesByIdMap) {
-		this.tagNamesByIdMap = tagNamesByIdMap;
+	public ICalendarOutput withIgnoreCategories(boolean ignoreCategories) {
+		this.ignoreCategories = ignoreCategories;
+		return this;
+	}
+	
+	public ICalendarOutput withIgnoreAttachments(boolean ignoreAttachments) {
+		this.ignoreAttachments = ignoreAttachments;
+		return this;
+	}
+	
+	public ICalendarOutput withIgnoreCustomValues(boolean ignoreCustomValues) {
+		this.ignoreCustomValues = ignoreCustomValues;
 		return this;
 	}
 	
@@ -131,7 +162,7 @@ public class ICalendarOutput {
 			try {
 				ical.getComponents().add(createToDoObject(output.task, output.extraProps, output.relatedToUid, logHandler));
 			} catch(Throwable t) {
-				log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
+				LogHandler.log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
 			}
 			
 			if (logHandler != null && buffLogHandler != null) {
@@ -142,11 +173,11 @@ public class ICalendarOutput {
 		return ical;
 	}
 	
-	public VToDo createToDoObject(TaskEx task, PropertyList extraProps, String relatedToUid) throws WTException {
+	public VToDo createToDoObject(final TaskEx task, final PropertyList extraProps, final String relatedToUid) throws WTException {
 		return createToDoObject(task, extraProps, relatedToUid, null);
 	}
 	
-	private VToDo createToDoObject(TaskEx task, PropertyList extraProps, String relatedToUid, LogHandler logHandler) throws WTException {
+	private VToDo createToDoObject(final TaskEx task, final PropertyList extraProps, final String relatedToUid, final LogHandler logHandler) throws WTException {
 		VToDo vtodo = new VToDo();
 		
 		// UID: globally unique identifier
@@ -236,19 +267,71 @@ public class ICalendarOutput {
 					vtodo.getProperties().add(ICal4jUtils.toIC4jExDate(task.getRecurrence().getExcludedDates(), startTime, DateTimeZone.UTC, true));
 				}
 			} else {
-				log(logHandler, 1, LogEntry.Level.WARN, "Recur rule is null");
+				LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Recur rule is null");
 			}
 		}
 		
-		// CATEGORIES: specified categories or tags
-		// https://www.kanzaki.com/docs/ical/categories.html
-		if (task.hasTags() && TagsMappingMode.NAME.equals(tagsMappingMode) && tagNamesByIdMap != null) {
-			Categories categories = ICalendarUtils.toCategories(mapCategoryNames(task.getTags(), logHandler));
-			if (categories != null) vtodo.getProperties().add(categories);
-		} else if (task.hasTags() && TagsMappingMode.ID.equals(tagsMappingMode)) {
-			Categories categories = ICalendarUtils.toCategories(task.getTags());
-			if (categories != null) vtodo.getProperties().add(categories);
+		// RECURRENCE-ID: identifies a specific instance of a recurring master entry
+		// https://www.kanzaki.com/docs/ical/recurrenceId.html
+		
+		// ASSIGNEES:
+		//TODO
+		
+		// ATTACH
+		// https://www.kanzaki.com/docs/ical/attach.html
+		if (!ignoreAttachments && task.hasAttachments()) {
+			for (TaskAttachment attachment : task.getAttachmentsOrEmpty()) {
+				try {
+					vtodo.getProperties().add(toAttach(attachment));
+				} catch (Exception ex) {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, ex.getMessage());
+				}
+			}
 		}
+		if (ignoreAttachments) LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Attachments ignored by ICalendarOutput configuration");
+		
+		if (!ignoreCategories && task.hasTags()) {
+			// CATEGORIES: specified categories or tags
+			// https://www.kanzaki.com/docs/ical/categories.html
+			if (TagsMappingMode.NAME.equals(categoriesMappingMode)) {
+				if (tagNamesById != null) {
+					Categories categories = ICalendarUtils.toCategories(mapCategoryNames(task.getTags(), logHandler));
+					if (categories != null) vtodo.getProperties().add(categories);
+				} else {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Tags ignored: NO tagId->tagName map provided");
+				}
+			} else if (TagsMappingMode.ID.equals(categoriesMappingMode)) {
+				Categories categories = ICalendarUtils.toCategories(task.getTags());
+				if (categories != null) vtodo.getProperties().add(categories);
+			}
+			
+			// X-WT-TAG
+			for (String tagId : task.getTagsOrEmpty()) {
+				String tagName = null;
+				if (tagNamesById != null) tagName = tagNamesById.get(tagId);
+				if (tagName == null) tagName = tagId;
+				try {
+					vtodo.getProperties().add(XTag.toProperty(tagId, tagName));
+				} catch (Exception ex) {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, ex.getMessage());
+				}
+			}
+			
+		}
+		if (ignoreCategories) LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Tags ignored by ICalendarOutput configuration");
+		
+		// X-WT-CUSTOMFIELDVALUE
+		Map<String, CustomFieldValue> customValues = task.getCustomValues();
+		if (!ignoreCustomValues && customValues != null) {
+			for (Map.Entry<String, CustomFieldValue> entry : customValues.entrySet()) {
+				try {
+					vtodo.getProperties().add(toXCustomFieldValue(entry.getValue()));
+				} catch (Exception ex) {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, ex.getMessage());
+				}
+			}
+		}
+		if (ignoreCustomValues) LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "CustomValues ignored by ICalendarOutput configuration");
 		
 		// RELATED-TO: represent a relationship or reference between one entry to another
 		// https://www.kanzaki.com/docs/ical/relatedTo.html
@@ -257,7 +340,7 @@ public class ICalendarOutput {
 		}
 		
 		// RDATE, EXRULE, RSTATUS -> Not Supported!
-		// ATTACH, ATTENDEE -> Ignored!
+		// ATTENDEE -> Ignored!
 		// CONTACT, GEO, URL, COMMENT, RESOURCES -> Not Supported! (from extra props)
 		
 		if (extraProps != null) {
@@ -283,25 +366,45 @@ public class ICalendarOutput {
 		}
 	}
 	
+	public static Attach toAttach(final TaskAttachment attachment) throws Exception {
+		if (attachment instanceof TaskAttachmentWithBytes) {
+			TaskAttachmentWithBytes attwb = (TaskAttachmentWithBytes)attachment;
+			ParameterList pl = new ParameterList();
+			pl.add(Value.BINARY);
+			pl.add(Encoding.BASE64);
+			pl.add(new XParameter("FILENAME", attachment.getFilename()));
+			return new Attach(pl, attwb.getBytes());
+			
+		} else {
+			throw new WTException("Unsupported custom-value: {}", ClassUtils.getSimpleClassName(attachment.getClass()));
+		}
+	}
+	
+	public static XProperty toXCustomFieldValue(final CustomFieldValue customFieldValue) throws Exception {
+		try {
+			if (customFieldValue.getStringValue() != null) return XCustomFieldValue.toProperty(customFieldValue.getFieldId(), customFieldValue.getStringValue(), false);
+			if (customFieldValue.getNumberValue()!= null) return XCustomFieldValue.toProperty(customFieldValue.getFieldId(), customFieldValue.getNumberValue());
+			if (customFieldValue.getBooleanValue()!= null) return XCustomFieldValue.toProperty(customFieldValue.getFieldId(), customFieldValue.getBooleanValue());
+			if (customFieldValue.getDateValue()!= null) return XCustomFieldValue.toProperty(customFieldValue.getFieldId(), customFieldValue.getDateValue());
+			if (customFieldValue.getTextValue()!= null) return XCustomFieldValue.toProperty(customFieldValue.getFieldId(), customFieldValue.getTextValue(), true);
+			throw new WTException("Unsupported custom-value: value is NULL");
+
+		} catch (URISyntaxException ex) {
+			throw new WTException(ex, "Unsupported custom-value");
+		}
+	}
+	
 	private Set<String> mapCategoryNames(Set<String> tags, LogHandler logHandler) {
-		if (tags == null || tagNamesByIdMap == null) return null;
+		if (tags == null || tagNamesById == null) return null;
 		LinkedHashSet<String> catNames = new LinkedHashSet<>();
 		for (String tag : tags) {
-			if (tagNamesByIdMap.containsKey(tag)) {
-				catNames.add(tagNamesByIdMap.get(tag));
+			if (tagNamesById.containsKey(tag)) {
+				catNames.add(tagNamesById.get(tag));
 			} else {
-				log(logHandler, 1, LogEntry.Level.WARN, "Unable to find tag name [{}]", tag);
+				LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Unable to find tag name [{}]", tag);
 			}
 		}
 		return catNames;
-	}
-	
-	private void log(LogHandler logHandler, int depth, LogEntry.Level level, String message, Object... arguments) {
-		if (logHandler != null) {
-			try {
-				logHandler.handle(new LogMessage(depth, level, message, arguments));
-			} catch(Throwable t) {}
-		}
 	}
 	
 	public static enum TagsMappingMode {

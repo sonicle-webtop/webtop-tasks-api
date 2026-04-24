@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.rits.cloning.Cloner;
 import com.sonicle.webtop.tasks.ITaskInstanceStatable;
 
@@ -41,7 +42,7 @@ import com.sonicle.webtop.tasks.ITaskInstanceStatable;
  */
 public class TaskInstance extends TaskEx implements ITaskInstanceStatable {
 	protected TaskInstanceId id;
-	protected String taskId;
+	protected String originalEventId;
 	protected Integer childrenTotalCount;
 	protected Integer childrenCompletedCount;
 	
@@ -52,7 +53,7 @@ public class TaskInstance extends TaskEx implements ITaskInstanceStatable {
 	/*
 	public TaskInstance(Task task) {
 		super();
-		this.id = TaskInstanceId.build(task.getTaskId(), task.getSeriesTaskId(), task.getSeriesInstanceId());
+		this.id = TaskInstanceId.build(task.getOriginalTaskId(), task.getSeriesTaskId(), task.getSeriesInstanceId());
 		Cloner.standard().copyPropertiesOfInheritedClass(task, this);
 	}
 	*/
@@ -60,7 +61,7 @@ public class TaskInstance extends TaskEx implements ITaskInstanceStatable {
 	public TaskInstance(TaskInstanceId id, Task task) {
 		super();
 		this.id = id;
-		this.taskId = task.getTaskId();
+		this.originalEventId = task.getTaskId();
 		this.childrenTotalCount = task.getChildrenTotalCount();
 		this.childrenCompletedCount = task.getChildrenCompletedCount();
 		Cloner.standard().copyPropertiesOfInheritedClass(task, this);
@@ -76,8 +77,8 @@ public class TaskInstance extends TaskEx implements ITaskInstanceStatable {
 	}
 	
 	@Override
-	public String getTaskId() {
-		return taskId;
+	public String getOriginalTaskId() {
+		return originalEventId;
 	}
 	
 	public Integer getChildrenTotalCount() {
@@ -95,5 +96,32 @@ public class TaskInstance extends TaskEx implements ITaskInstanceStatable {
 	@Override
 	public Boolean getHasRecurrence() {
 		return getRecurrence() != null;
+	}
+	
+	public Type getType() {
+		return computeType(id, originalEventId, getHasRecurrence());
+	}
+	
+	public static Type computeType(final TaskInstanceId instanceId, final String originalEventId, final boolean hasRecurrence) {
+		// NB: in order to return consistent results, recurrence MUST be read 
+		// and set into instance object; otherwise there is no guarantee to 
+		// identify type precisely!
+		
+		if (hasRecurrence && TaskInstanceId.isSeriesMaster(instanceId, originalEventId)) {
+			return Type.MASTER;
+		} else if (hasRecurrence && TaskInstanceId.isSeriesItem(instanceId, originalEventId)) {
+			return Type.OCCURRENCE;
+		} else if (TaskInstanceId.isSeriesException(instanceId, originalEventId)) {
+			return Type.EXCEPTION;
+		} else {
+			return Type.SINGLE;
+		}
+	}
+	
+	public static enum Type {
+		@SerializedName("SI") SINGLE,
+		@SerializedName("MA") MASTER,
+		@SerializedName("OC") OCCURRENCE,
+		@SerializedName("EX") EXCEPTION;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sonicle S.r.l.
+ * Copyright (C) 2026 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,40 +28,15 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2021 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2026 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.io;
-
-import com.sonicle.webtop.core.util.ICalendarUtils;
-import com.sonicle.webtop.tasks.model.TaskEx;
-import java.util.regex.Pattern;
-import net.fortuna.ical4j.model.PropertyList;
-import net.fortuna.ical4j.model.component.VToDo;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
  * @author malbinola
  */
-public class TaskInput {
-	private static final Pattern PATTERN_LINE_DTSTAMP = Pattern.compile("\nDTSTAMP:.*(\r)?\n");
-	public final TaskEx task;
-	public final ICalendarUtils.RecurringRefs recurringRefs;
-	public final String relatedToUid;
-	public final PropertyList extraProps;
-	public final VToDo sourceObject;
-
-	public TaskInput(TaskEx task, ICalendarUtils.RecurringRefs recurringRefs, String relatedToUid, PropertyList extraProps, VToDo sourceObject) {
-		this.task = task;
-		this.recurringRefs = recurringRefs;
-		this.relatedToUid = relatedToUid;
-		this.extraProps = extraProps;
-		this.sourceObject = sourceObject;
-	}
+public interface TaskInputConsumer {
 	
-	public String computeDataHash() {
-		if (sourceObject == null) return null;
-		final String s = PATTERN_LINE_DTSTAMP.matcher(sourceObject.toString()).replaceFirst("\n");
-		return DigestUtils.md5Hex(s);
-	}
+	public void consume(TaskInput input);
 }

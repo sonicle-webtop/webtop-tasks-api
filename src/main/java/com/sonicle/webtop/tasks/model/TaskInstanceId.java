@@ -46,7 +46,8 @@ import org.joda.time.LocalDate;
  * @author malbinola
  */
 public class TaskInstanceId extends CId {
-	public static final String MASTER_INSTANCE_ID = "00000000";
+	public static final String DUMMY_TASK_ID = "00000000000000000000000000000000";
+	public static final String NO_INSTANCE_DATE = "00000000";
 	
 	public TaskInstanceId(String id) {
 		super(".", id, 2);
@@ -74,7 +75,7 @@ public class TaskInstanceId extends CId {
 	}
 
 	public boolean hasNoInstance() {
-		return MASTER_INSTANCE_ID.equals(getInstance());
+		return NO_INSTANCE_DATE.equals(getInstance());
 	}
 
 	public static TaskInstanceId parse(final String s) {
@@ -85,24 +86,46 @@ public class TaskInstanceId extends CId {
 		}
 	}
 	
+	public static TaskInstanceId asMasterInstanceId(TaskInstanceId iid) {
+		Check.notNull(iid, "iid");
+		return buildMaster(iid.getTaskId());
+	}
+	
+	public static boolean isSeriesMaster(TaskInstanceId iid, String underlyingEventId) {
+		Check.notNull(iid, "iid");
+		return iid.getTaskId().equals(underlyingEventId) && NO_INSTANCE_DATE.equals(iid.getInstance());
+	}
+	
+	public static boolean isSeriesException(TaskInstanceId iid, String underlyingEventId) {
+		Check.notNull(iid, "iid");
+		return !StringUtils.isBlank(underlyingEventId) && !iid.getTaskId().equals(underlyingEventId) && !NO_INSTANCE_DATE.equals(iid.getInstance());
+	}
+	
+	public static boolean isSeriesItem(TaskInstanceId iid, String underlyingEventId) {
+		Check.notNull(iid, "iid");
+		return !isSeriesMaster(iid, underlyingEventId) && !isSeriesException(iid, underlyingEventId) && iid.getTaskId().equals(underlyingEventId);
+	}
+	
+	public static TaskInstanceId buildDummy() {
+		return build(DUMMY_TASK_ID, null);
+	}
+	
+	public static TaskInstanceId buildSingleInstance(final String eventId) {
+		return build(eventId, NO_INSTANCE_DATE);
+	}
+	
+	public static TaskInstanceId buildMaster(final String masterSeriesTaskId) {
+		return build(masterSeriesTaskId, NO_INSTANCE_DATE);
+	}
+	
 	public static TaskInstanceId build(final String taskId, final DateTime instance, final DateTimeZone timezone) {
 		return build(taskId, JodaTimeUtils.print(JodaTimeUtils.createFormatter("yyyyMMdd", timezone), instance));
-	}
-	
-	/* Avoid UTC usage
-	public static TaskInstanceId build(final String taskId, final DateTime instance) {
-		return build(taskId, JodaTimeUtils.print(JodaTimeUtils.createFormatter("yyyyMMdd", DateTimeZone.UTC), instance));
-	}
-	*/
-	
-	public static TaskInstanceId buildMaster(final String taskId) {
-		return build(taskId, MASTER_INSTANCE_ID);
 	}
 	
 	public static TaskInstanceId build(final String taskId, final String instance) {
 		return new Builder()
 			.withSeparator(".")
-			.withTokens(Check.notNull(taskId, "taskId"), StringUtils.defaultIfBlank(instance, MASTER_INSTANCE_ID))
+			.withTokens(Check.notNull(taskId, "taskId"), StringUtils.defaultIfBlank(instance, NO_INSTANCE_DATE))
 			.build();
 	}
 

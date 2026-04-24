@@ -54,7 +54,7 @@ public class TaskLookupInstance extends TaskLookup implements ITaskInstanceStata
 	} 
 	
 	@Override
-	public String getTaskId() {
+	public String getOriginalTaskId() {
 		return taskId;
 	}
 	

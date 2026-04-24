@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sonicle S.r.l.
+ * Copyright (C) 2026 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,40 +28,55 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2021 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2026 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.tasks.io;
 
 import com.sonicle.commons.InternetAddressUtils;
 import com.sonicle.commons.LangUtils;
+import com.sonicle.commons.time.JodaTimeUtils;
+import com.sonicle.webtop.core.app.ical4j.LazyCalendarComponentConsumer;
+import com.sonicle.webtop.core.app.ical4j.XCustomFieldValue;
+import com.sonicle.webtop.core.app.ical4j.XTag;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
 import com.sonicle.webtop.core.app.util.log.LogHandler;
 import com.sonicle.webtop.core.app.util.log.LogMessage;
+import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.ICal4jUtils;
 import com.sonicle.webtop.core.util.ICalendarUtils;
+import com.sonicle.webtop.tasks.model.TaskAttachment;
+import com.sonicle.webtop.tasks.model.TaskAttachmentWithBytes;
+import com.sonicle.webtop.tasks.model.TaskAttachmentWithInputStream;
 import com.sonicle.webtop.tasks.model.TaskBase;
+import com.sonicle.webtop.tasks.model.TaskEx;
 import com.sonicle.webtop.tasks.model.TaskRecurrence;
 import jakarta.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.parameter.Cn;
+import net.fortuna.ical4j.model.property.Attach;
 import net.fortuna.ical4j.model.property.Categories;
 import net.fortuna.ical4j.model.property.Clazz;
 import net.fortuna.ical4j.model.property.Organizer;
@@ -69,6 +84,7 @@ import net.fortuna.ical4j.model.property.PercentComplete;
 import net.fortuna.ical4j.model.property.Priority;
 import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Status;
+import net.fortuna.ical4j.model.property.XProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 
@@ -77,18 +93,49 @@ import org.joda.time.DateTimeZone;
  * @author malbinola
  */
 public class ICalendarInput implements TasksStreamReader {
-	private DateTimeZone defaultTimezone;
+	private DateTimeZone defaultTz;
+	private Map<String, String> tagNamesById = null;
+	private Map<String, List<String>> tagIdsByName = null;
+	private boolean ignoreClassification = false;
+	private boolean ignoreCategories = false;
+	private boolean ignoreAttachments = false;
+	private boolean ignoreCustomValues = false;
 	private boolean defaultIsPrivate = false;
-	private boolean returnCalendarObject = false;
-	private Map<String, String> categoriesToTagsMap = null;
+	private boolean includeSourceComponentInOutput = false;
 	private LogHandler logHandler = null;
 	
-	public ICalendarInput(DateTimeZone defaultTimezone) {
-		this.defaultTimezone = defaultTimezone;
+	public ICalendarInput(DateTimeZone defaultTz) {
+		this.defaultTz = defaultTz;
 	}
 	
-	public ICalendarInput withDefaultTimezone(DateTimeZone defaultTimezone) {
-		this.defaultTimezone = defaultTimezone;
+	public ICalendarInput(DateTimeZone defaultTz, Map<String, String> tagNamesById, Map<String, List<String>> tagIdsByName) {
+		this.defaultTz = defaultTz;
+		this.tagNamesById = tagNamesById;
+		this.tagIdsByName = tagIdsByName;
+	}
+	
+	public ICalendarInput withDefaultTimezone(DateTimeZone defaultTz) {
+		this.defaultTz = defaultTz;
+		return this;
+	}
+	
+	public ICalendarInput withIgnoreClassification(boolean ignoreClassification) {
+		this.ignoreClassification = ignoreClassification;
+		return this;
+	}
+	
+	public ICalendarInput withIgnoreCategories(boolean ignoreCategories) {
+		this.ignoreCategories = ignoreCategories;
+		return this;
+	}
+	
+	public ICalendarInput withIgnoreAttachments(boolean ignoreAttachments) {
+		this.ignoreAttachments = ignoreAttachments;
+		return this;
+	}
+	
+	public ICalendarInput withIgnoreCustomValues(boolean ignoreCustomValues) {
+		this.ignoreCustomValues = ignoreCustomValues;
 		return this;
 	}
 	
@@ -97,13 +144,8 @@ public class ICalendarInput implements TasksStreamReader {
 		return this;
 	}
 	
-	public ICalendarInput withReturnCalendarObject(boolean returnCalendarObject) {
-		this.returnCalendarObject = returnCalendarObject;
-		return this;
-	}
-	
-	public ICalendarInput withCategoriesToTagsMap(Map<String, String> categoriesToTagsMap) {
-		this.categoriesToTagsMap = categoriesToTagsMap;
+	public ICalendarInput withIncludeSourceComponentInOutput(boolean includeSourceComponentInOutput) {
+		this.includeSourceComponentInOutput = includeSourceComponentInOutput;
 		return this;
 	}
 	
@@ -133,38 +175,54 @@ public class ICalendarInput implements TasksStreamReader {
 		for (Iterator xi = calendar.getComponents().iterator(); xi.hasNext();) {
 			final Component component = (Component) xi.next();
 			if (component instanceof VToDo) {
-				count++;
-				final VToDo vtd = (VToDo)component;
-				final int vtdNo = count;
-				
-				BufferingLogHandler buffLogHandler = null;
-				if (logHandler != null) {
-					buffLogHandler = new BufferingLogHandler() {
-						@Override
-						public List<LogEntry> first() {
-							return Arrays.asList(new LogMessage(0, LogEntry.Level.INFO, "VTODO #{} [{}]", vtdNo, ICal4jUtils.printDump(vtd)));
-						}
-					};
-				}
-				
-				try {
-					final TaskInput result = parseToDoObject(vtd, buffLogHandler);
-					//if (result.task.trimFieldLengths()) {
-					//	log(buffLogHandler, 1, LogEntry.Level.WARN, "Some fields were truncated due to max-length");
-					//}
-					results.add(result);
-					
-				} catch(Throwable t) {
-					log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
-				}
-				
-				if (logHandler != null && buffLogHandler != null) {
-					final List<LogEntry> entries = buffLogHandler.flush();
-					if (entries != null) logHandler.handle(entries);
-				}
+				handleToDoObjectEntry((VToDo)component, count++, (input) -> {
+					results.add(input);
+				});
 			}
 		}
 		return results;
+	}
+	
+	private void handleToDoObjectEntry(final VToDo vtodo, final int no, final TaskInputConsumer consumer) {
+		BufferingLogHandler buffLogHandler = null;
+		if (logHandler != null) {
+			buffLogHandler = new BufferingLogHandler() {
+				@Override
+				public List<LogEntry> first() {
+					return Arrays.asList(new LogMessage(0, LogEntry.Level.INFO, "VEVENT #{} [{}]", no, ICal4jUtils.printDump(vtodo)));
+				}
+			};
+		}
+		
+		try {
+			final TaskInput result = parseToDoObject(vtodo, buffLogHandler);
+			//if (result.task.trimFieldLengths()) {
+			//	LogHandler.log(buffLogHandler, 1, LogEntry.Level.WARN, "Some fields were truncated due to max-length");
+			//}
+			consumer.consume(result);
+
+		} catch (Throwable t) {
+			LogHandler.log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
+		}
+
+		if (logHandler != null && buffLogHandler != null) {
+			final List<LogEntry> entries = buffLogHandler.flush();
+			if (entries != null) logHandler.handle(entries);
+		}
+	}
+	
+	public void parseEventObjects(final InputStream is, final TaskInputConsumer consumer) throws WTException, ParserException, IOException {
+		final AtomicInteger count = new AtomicInteger(0);
+		ICalendarUtils.createLazyCalendarBuilder(
+			new LazyCalendarComponentConsumer() {
+				@Override
+				public void consume(CalendarComponent component) {
+					if (component instanceof VToDo) {
+						handleToDoObjectEntry((VToDo)component, count.incrementAndGet(), consumer);
+					}
+				}					
+			}
+		).build(is);
 	}
 	
 	public TaskInput parseToDoObject(final VToDo vtodo) throws WTException {
@@ -173,9 +231,7 @@ public class ICalendarInput implements TasksStreamReader {
 	
 	private TaskInput parseToDoObject(final VToDo vtodo, final LogHandler logHandler) throws WTException {
 		// https://www.kanzaki.com/docs/ical/vtodo.html
-		TaskBase task = new TaskBase();
-		TaskRecurrence taskRecurrence = null;
-		Set<String> tagNames = null;
+		TaskEx task = new TaskEx();
 		String relatedToUid = null;
 		
 		//TODO: pass string field lengths in constructor or take them from db field definitions
@@ -186,16 +242,17 @@ public class ICalendarInput implements TasksStreamReader {
 		if (!StringUtils.isBlank(uid)) {
 			task.setPublicUid(uid);
 		} else {
-			log(logHandler, 1, LogEntry.Level.WARN, "Uid is missing");
+			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Uid is missing");
 		}
 		
 		// ORGANIZER: who have organized the entity
 		// https://www.kanzaki.com/docs/ical/organizer.html
-		String owner = toTaskOrganizer(vtodo.getOrganizer());
-		if (!StringUtils.isBlank(owner)) {
-			task.setOrganizer(owner);
-		} else {
-			log(logHandler, 1, LogEntry.Level.WARN, "Organizer invalid or empty [{}]", ICal4jUtils.getPropertyValue(vtodo.getOrganizer()));
+		try {
+			InternetAddress iaOrg = ICalendarUtils.getOrganizerAddress(vtodo);
+			//TODO: should we raise an exception when null?
+			if (iaOrg != null) task.setOrganizer(InternetAddressUtils.toFullAddress(iaOrg));
+		} catch (Exception ex) {
+			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Organizer invalid or empty [{}]", ICal4jUtils.getPropertyValue(vtodo.getOrganizer()));
 		}
 		
 		// CREATED: the date and time when the entity was created in the store
@@ -215,16 +272,16 @@ public class ICalendarInput implements TasksStreamReader {
 		
 		// SUMMARY: a brief description of the entity
 		// https://www.kanzaki.com/docs/ical/summary.html
-		String summary = ICal4jUtils.getPropertyValue(vtodo.getSummary());
+		String summary = ICalendarUtils.getSummary(vtodo);
 		if (!StringUtils.isBlank(summary)) {
 			task.setSubject(summary);
 		} else {
 			task.setSubject("");
-			log(logHandler, 1, LogEntry.Level.WARN, "Subject is empty");
+			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Subject is empty");
 		}
 		
-		// LOCATION: the intended venue for the activity
-		// http://www.kanzaki.com/docs/ical/location.html
+		// LOCATION: the intended venue for the activity defined by a calendar component
+		// https://www.kanzaki.com/docs/ical/location.html
 		String location = ICal4jUtils.getPropertyValue(vtodo.getLocation());
 		if (!StringUtils.isBlank(location)) {
 			task.setLocation(location);
@@ -234,18 +291,18 @@ public class ICalendarInput implements TasksStreamReader {
 		
 		// DTSTART: when the todo begins
 		// https://www.kanzaki.com/docs/ical/dtstart.html
-		org.joda.time.DateTime start = ICal4jUtils.toJodaDateTime(ICal4jUtils.getDatePropertyValue(vtodo.getStartDate()), defaultTimezone);
+		org.joda.time.DateTime start = ICal4jUtils.toJodaDateTime(ICal4jUtils.getDatePropertyValue(vtodo.getStartDate()), defaultTz);
 		task.setStart(start);
 		
 		// DUE: when the todo is expected to be completed
 		// https://www.kanzaki.com/docs/ical/due.html
-		org.joda.time.DateTime due = ICal4jUtils.toJodaDateTime(ICal4jUtils.getDatePropertyValue(vtodo.getDue()), defaultTimezone);
+		org.joda.time.DateTime due = ICal4jUtils.toJodaDateTime(ICal4jUtils.getDatePropertyValue(vtodo.getDue()), defaultTz);
 		task.setDue(due);
 		
 		// DURATION: duration of the todo (alternative to DUE) -- NOT SUPPORTED
 		// https://www.kanzaki.com/docs/ical/duration.html
 		if (vtodo.getDuration() != null) {
-			log(logHandler, 1, LogEntry.Level.WARN, "Duration is NOT supported");
+			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Duration is NOT supported");
 		}
 		
 		// DESCRIPTION: the complete description
@@ -281,59 +338,181 @@ public class ICalendarInput implements TasksStreamReader {
 		// https://www.kanzaki.com/docs/ical/class.html
 		// https://appgenix.uservoice.com/forums/280499-business-calendar-2/suggestions/18698599-i-would-like-to-see-another-privacy-option-confid
 		String clazz = ICal4jUtils.getPropertyValue(vtodo.getClassification());
-		if (!StringUtils.isBlank(clazz)) {
+		if (!ignoreClassification && !StringUtils.isBlank(clazz)) {
 			// CONFIDENTIAL or PRIVATE are private synonyms
 			task.setIsPrivate(StringUtils.equals(clazz, Clazz.CONFIDENTIAL.getValue()) || StringUtils.equals(clazz, Clazz.PRIVATE.getValue()));
 		} else {
 			task.setIsPrivate(defaultIsPrivate);
 		}
+		if (ignoreClassification) LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "CLASS property ignored by ICalendarInput configuration");
 		
 		// RRULE, EXDATE: defines the repeating pattern and the list of exceptions
 		// https://www.kanzaki.com/docs/ical/rrule.html
 		// https://www.kanzaki.com/docs/ical/exdate.html
 		ICalendarUtils.RecurInfo recurInfo = ICalendarUtils.extractRecurInfo(vtodo);
 		if (recurInfo.recur != null && start != null) {
-			taskRecurrence = new TaskRecurrence(recurInfo.recur.toString(), start, recurInfo.exDates);
+			task.setRecurrence(new TaskRecurrence(recurInfo.recur.toString(), start, recurInfo.exDates));
+			
 		} else if (recurInfo.recur != null) {
-			log(logHandler, 1, LogEntry.Level.WARN, "Recurrence rule ignored: Start is missing");
+			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Recurrence rule ignored: Start is missing");
 		}
 		
 		// RECURRENCE-ID: identifies a specific instance of a recurring master entry
 		// https://www.kanzaki.com/docs/ical/recurrenceId.html
 		ICalendarUtils.RecurringRefs recurringRefs = ICalendarUtils.extractRecurringRefs(vtodo);
 		
-		// CATEGORIES: specified categories or tags
-		// https://www.kanzaki.com/docs/ical/categories.html
-		tagNames = ICalendarUtils.toCategoriesSet((Categories)vtodo.getProperty(Property.CATEGORIES));
+		// ASSIGNEES
+		//TODO
+		
+		// ATTACH
+		// https://www.kanzaki.com/docs/ical/attach.html
+		PropertyList attachs = vtodo.getProperties(Property.ATTACH);
+		if (!ignoreAttachments && !attachs.isEmpty()) {
+			ArrayList<TaskAttachment> eventAttachments = new ArrayList<>();
+			for (Object o: attachs) {
+				try {
+					eventAttachments.add(toTaskAttachment((Attach)o));
+				} catch (Exception ex) {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, ex.getMessage());
+				}
+			}
+			task.setAttachments(eventAttachments);
+		}
+		if (ignoreAttachments) LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "ATTACH properties ignored by ICalendarInput configuration");
+		
+		if (!ignoreCategories) {
+			Set<String> eventTags = new HashSet<>();
+			
+			// X-WT-TAG
+			PropertyList xTags = vtodo.getProperties(XTag.PROPERTY_NAME);
+			for (Object o : xTags) {
+				try {
+					String[] tag = toTag((XProperty)o);
+					if (!eventTags.contains(tag[0])) {
+						if (validateTagId(tag[0])) {
+							eventTags.add(tag[0]);
+						} else {
+							LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "XTag '{}' ignored: invalid ID '{}'", tag[1], tag[0]);
+						}
+					} else {
+						LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "XTag '{}' ignored: mapping for ID '{}' already present", tag[1], tag[0]);
+					}
+				} catch (Exception ex) {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, ex.getMessage());
+				}
+			}
+			
+			// CATEGORIES: specified categories or tags
+			// https://www.kanzaki.com/docs/ical/categories.html
+			Set<String> categories = ICalendarUtils.toCategoriesSet((Categories)vtodo.getProperty(Property.CATEGORIES));
+			if (categories != null && !categories.isEmpty()) {
+				if (tagIdsByName != null) {
+					for (String tagName : categories) {
+						if (tagIdsByName.containsKey(tagName)) {
+							for (String tagId : tagIdsByName.get(tagName)) {
+								if (!eventTags.contains(tagId)) {
+									if (validateTagId(tagId)) {
+										eventTags.add(tagId);
+									} else {
+										LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "XTag '{}' ignored: invalid ID '{}'", tagName, tagId);
+									}
+								} else {
+									LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Category '{}' ignored: mapping for '{}' already present", tagName, tagId);
+								}
+							}
+						}
+					}
+				} else {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Categories ignored: NO tagName->tagId map provided");
+				}
+			}
+			
+		} else {
+			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "CATEGORIES/X-WT-TAG properties ignored by ICalendarInput configuration");
+		}
+		
+		// X-WT-CUSTOMFIELDVALUE
+		PropertyList xCustomFieldValues = vtodo.getProperties(XCustomFieldValue.PROPERTY_NAME);
+		if (!ignoreCustomValues && !xCustomFieldValues.isEmpty()) {
+			HashMap<String, CustomFieldValue> eventCustomValues = new HashMap<>();
+			for (Object o : xCustomFieldValues) {
+				try {
+					CustomFieldValue cfv = toCustomFieldValue((XProperty)o);
+					if (!eventCustomValues.containsKey(cfv.getFieldId())) {
+						eventCustomValues.put(cfv.getFieldId(), cfv);
+					} else {
+						LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "CustomValue '{}' ignored: already present", cfv.getFieldId());
+					}
+					
+				} catch (Exception ex) {
+					LogHandler.log(logHandler, 1, LogEntry.Level.WARN, ex.getMessage());
+				}
+			}
+			task.setCustomValues(eventCustomValues);
+		}
+		if (ignoreCustomValues) LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "X-WT-CUSTOMFIELDVALUE properties ignored by ICalendarInput configuration");
 		
 		// RELATED-TO: represent a relationship or reference between one entry to another
 		// https://www.kanzaki.com/docs/ical/relatedTo.html
 		relatedToUid = ICal4jUtils.getPropertyValue(vtodo.getProperty(Property.RELATED_TO));
 		
 		// RDATE, EXRULE, RSTATUS -> Not Supported!
-		// ATTACH, ATTENDEE -> Ignored!
+		// ATTENDEE -> Ignored!
 		
 		Set<String> names = new LinkedHashSet(Arrays.asList(Property.CONTACT, Property.GEO, Property.URL, Property.COMMENT, Property.RESOURCES));
 		PropertyList extraProps = ICalendarUtils.extractProperties(vtodo, names, true, null);
 		
-		return new TaskInput(task, taskRecurrence, recurringRefs, tagNames, relatedToUid, extraProps, returnCalendarObject ? vtodo : null);
+		return new TaskInput(task, recurringRefs, relatedToUid, extraProps, includeSourceComponentInOutput ? vtodo : null);
 	}
 	
-	public static String toTaskOrganizer(final Organizer organizer) {
-		// http://www.kanzaki.com/docs/ical/organizer.html
+	private String[] toTag(XProperty xTag) throws Exception {
+		String id = XTag.getParamTagId(xTag);
+		if (StringUtils.isEmpty(id)) throw new WTException("Unsupported tag: missing {} parameter", XTag.PARAM_ID);
+		return new String[]{id, XTag.getTagName(xTag)};
+	}
+	
+	private CustomFieldValue toCustomFieldValue(XProperty xCustomFieldValue) throws Exception {
+		final String id = XCustomFieldValue.getFieldId(xCustomFieldValue);
+		final String type = XCustomFieldValue.getFieldType(xCustomFieldValue);
+		final String value = XCustomFieldValue.getFieldValue(xCustomFieldValue);
 		
-		if (organizer != null) {
-			// Extract email and common name (CN)
-			// Eg: CN=Henry Cabot:MAILTO:hcabot@host2.com -> drop ":MAILTO:"
-			Cn cn = (Cn)organizer.getParameter(Parameter.CN);
-			URI uri = organizer.getCalAddress();
-			if (uri != null) {
-				String address = uri.getSchemeSpecificPart();
-				InternetAddress ia = InternetAddressUtils.toInternetAddress(address, (cn == null) ? address : cn.getValue());
-				return InternetAddressUtils.toFullAddress(ia);
-			}
+		CustomFieldValue cfv = null;
+		if (XCustomFieldValue.TYPE_STRING.equals(type)) {
+			cfv = new CustomFieldValue(id);
+			cfv.setStringValue(LangUtils.value(value, (String)null));
+		} else if (XCustomFieldValue.TYPE_NUMBER.equals(type)) {
+			cfv = new CustomFieldValue(id);
+			cfv.setNumberValue(LangUtils.value(value, (Double)null));
+		} else if (XCustomFieldValue.TYPE_BOOLEAN.equals(type)) {
+			cfv = new CustomFieldValue(id);
+			cfv.setBooleanValue(LangUtils.value(value, (Boolean)null));
+		} else if (XCustomFieldValue.TYPE_DATE.equals(type)) {
+			cfv = new CustomFieldValue(id);
+			cfv.setDateValue(JodaTimeUtils.parseDateTimeISO(value));
+		} else if (XCustomFieldValue.TYPE_TEXT.equals(type)) {
+			cfv = new CustomFieldValue(id);
+			cfv.setTextValue(LangUtils.value(value, (String)null));
+		} else {
+			throw new WTException("Unsupported custom-value type [{}]", type);
 		}
-		return null;
+		return cfv;
+	}
+	
+	private TaskAttachment toTaskAttachment(final Attach attach) throws Exception {
+		TaskAttachment taskAttachment = null;
+		
+		if (attach.getBinary() != null) {
+			taskAttachment = new TaskAttachmentWithBytes(attach.getBinary());
+			taskAttachment.setFilename(ICal4jUtils.getParameterValue(attach.getParameter("FILENAME")));
+			taskAttachment.setMediaType(taskAttachment.getFilename());
+			
+		} else if (attach.getUri() != null) {
+			URL url = attach.getUri().toURL();
+			taskAttachment = new TaskAttachmentWithInputStream(url.openStream());
+			taskAttachment.setFilename(url.getFile());
+			taskAttachment.setMediaType(taskAttachment.getFilename());
+		}
+		return taskAttachment;
 	}
 	
 	public static TaskBase.Status toTaskStatus(final Status status) {
@@ -385,27 +564,11 @@ public class ICalendarInput implements TasksStreamReader {
 		}
 	}
 	
-	/*
-	Set<String> catNames = ICalendarUtils.toCategoriesSet((Categories)vtodo.getProperty(Property.CATEGORIES));
-		if (categoriesToTagsMap != null && catNames != null) {
-			for (String catName : catNames) {
-				String tagId = categoriesToTagsMap.get(catName);
-				if (tagId != null) {
-					
-				} else {
-					//TODO: log warning categories is lost
-				}
-			}
-		} else if (catNames != null) {
-			//TODO: log warning categories are lost
-		}
-	*/
-	
-	private void log(LogHandler logHandler, int depth, LogEntry.Level level, String message, Object... arguments) {
-		if (logHandler != null) {
-			try {
-				logHandler.handle(new LogMessage(depth, level, message, arguments));
-			} catch(Throwable t) {}
+	private boolean validateTagId(String tagId) {
+		if (tagNamesById == null || tagNamesById.isEmpty()) {
+			return true;
+		} else {
+			return tagNamesById.containsKey(tagId);
 		}
 	}
 }

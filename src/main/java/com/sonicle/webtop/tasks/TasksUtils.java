@@ -57,7 +57,7 @@ public class TasksUtils {
 	
 	public static boolean isTaskSeriesMaster(ITaskInstanceStatable task) {
 		String iid = task.getId().toString();
-		return StringUtils.startsWith(iid, task.getTaskId()) && StringUtils.endsWith(iid, ".00000000") && task.getHasRecurrence();
+		return StringUtils.startsWith(iid, task.getOriginalTaskId()) && StringUtils.endsWith(iid, ".00000000") && task.getHasRecurrence();
 	}
 	
 	public static boolean isTaskSeriesItem(ITaskInstanceStatable task) {
@@ -66,6 +66,6 @@ public class TasksUtils {
 	
 	public static boolean isTaskSeriesBroken(ITaskInstanceStatable task) {
 		String iid = task.getId().toString();
-		return !StringUtils.startsWith(iid, task.getTaskId()) && !StringUtils.endsWith(iid, ".00000000");
+		return !StringUtils.startsWith(iid, task.getOriginalTaskId()) && !StringUtils.endsWith(iid, ".00000000");
 	}
 }
