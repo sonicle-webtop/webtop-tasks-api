@@ -32,11 +32,11 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.sonicle.commons.Check;
 import com.sonicle.webtop.core.util.ICal4jUtils;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import net.fortuna.ical4j.model.Recur;
-import net.sf.qualitycheck.Check;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
