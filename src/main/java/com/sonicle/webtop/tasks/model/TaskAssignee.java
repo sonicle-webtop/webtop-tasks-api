@@ -33,12 +33,10 @@
 package com.sonicle.webtop.tasks.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.sonicle.commons.IdentityEquality;
 import com.sonicle.commons.InternetAddressUtils;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import jakarta.mail.internet.InternetAddress;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jooq.tools.StringUtils;
 
 /**
  *
@@ -112,22 +110,12 @@ public class TaskAssignee {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(getAssigneeId())
-			.append(getRecipient())
-			.append(getRecipientUserId())
-			.append(getResponseStatus())
-			.toHashCode();
+		return IdentityEquality.hashCode(this, assigneeId);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TaskAssignee == false) return false;
-		if (this == obj) return true;
-		final TaskAssignee otherObject = (TaskAssignee)obj;
-		return new EqualsBuilder()
-			.append(getAssigneeId(), otherObject.getAssigneeId())
-			.isEquals();
+		return IdentityEquality.equals(this, obj, assigneeId, () -> ((TaskAssignee)obj).assigneeId);
 	}
 	
 	public static enum ResponseStatus {

@@ -32,10 +32,9 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.sonicle.commons.IdentityEquality;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
 /**
@@ -100,19 +99,12 @@ public class TaskAttachment {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(getAttachmentId())
-			.toHashCode();
+		return IdentityEquality.hashCode(this, attachmentId);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TaskAttachment == false) return false;
-		if (this == obj) return true;
-		final TaskAttachment otherObject = (TaskAttachment)obj;
-		return new EqualsBuilder()
-			.append(getAttachmentId(), otherObject.getAttachmentId())
-			.isEquals();
+		return IdentityEquality.equals(this, obj, attachmentId, () -> ((TaskAttachment)obj).attachmentId);
 	}
 	
 	public static List<TaskAttachment> asListOfTaskAttachmentsWithInputRef(List<TaskAttachment> attachmentsToClone) {

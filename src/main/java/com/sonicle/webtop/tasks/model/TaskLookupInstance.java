@@ -32,9 +32,8 @@
  */
 package com.sonicle.webtop.tasks.model;
 
+import com.sonicle.commons.IdentityEquality;
 import com.sonicle.webtop.tasks.ITaskInstanceStatable;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  *
@@ -68,18 +67,11 @@ public class TaskLookupInstance extends TaskLookup implements ITaskInstanceStata
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(getIdAsString())
-			.toHashCode();
+		return IdentityEquality.hashCode(this, getIdAsString());
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TaskLookupInstance == false) return false;
-		if (this == obj) return true;
-		final TaskLookupInstance otherObject = (TaskLookupInstance)obj;
-		return new EqualsBuilder()
-			.append(getIdAsString(), otherObject.getIdAsString())
-			.isEquals();
+		return IdentityEquality.equals(this, obj, getIdAsString(), () -> ((TaskLookupInstance)obj).getIdAsString());
 	}
 }
