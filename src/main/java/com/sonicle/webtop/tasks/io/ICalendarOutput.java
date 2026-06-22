@@ -79,6 +79,7 @@ import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.PercentComplete;
 import net.fortuna.ical4j.model.property.Priority;
+import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RelatedTo;
 import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Status;
@@ -262,6 +263,7 @@ public class ICalendarOutput {
 		if (task.hasRecurrence()) {
 			Recur recur = task.getRecurrence().getRuleRecur();
 			if (recur != null) {
+				vtodo.getProperties().add(new RRule(recur));
 				if (task.getRecurrence().getExcludedDates() != null) {
 					LocalTime startTime = task.getStart().withZone(DateTimeZone.UTC).toLocalTime();
 					vtodo.getProperties().add(ICal4jUtils.toIC4jExDate(task.getRecurrence().getExcludedDates(), startTime, DateTimeZone.UTC, true));
