@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.tasks.io;
 
+import com.sonicle.commons.Check;
 import com.sonicle.webtop.core.util.ICalendarUtils;
 import com.sonicle.webtop.tasks.model.TaskEx;
 import java.util.regex.Pattern;
@@ -46,14 +47,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class TaskInput {
 	private static final Pattern PATTERN_LINE_DTSTAMP = Pattern.compile("\nDTSTAMP:.*(\r)?\n");
 	public final TaskEx task;
-	public final ICalendarUtils.RecurringRefs recurringRefs;
-	public final String relatedToUid;
+	public final ICalendarUtils.RRInstanceInfo recurringInstanceInfo;
+	public final String relatedToUid; //TODO: delete me!
 	public final PropertyList extraProps;
 	public final VToDo sourceObject;
 
-	public TaskInput(TaskEx task, ICalendarUtils.RecurringRefs recurringRefs, String relatedToUid, PropertyList extraProps, VToDo sourceObject) {
-		this.task = task;
-		this.recurringRefs = recurringRefs;
+	public TaskInput(TaskEx task, ICalendarUtils.RRInstanceInfo recurringInstanceInfo, String relatedToUid, PropertyList extraProps, VToDo sourceObject) {
+		this.task = Check.notNull(task, "task");
+		this.recurringInstanceInfo = recurringInstanceInfo;
 		this.relatedToUid = relatedToUid;
 		this.extraProps = extraProps;
 		this.sourceObject = sourceObject;

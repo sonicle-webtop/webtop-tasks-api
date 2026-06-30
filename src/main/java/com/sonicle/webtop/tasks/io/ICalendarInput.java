@@ -359,7 +359,7 @@ public class ICalendarInput implements TasksStreamReader {
 		
 		// RECURRENCE-ID: identifies a specific instance of a recurring master entry
 		// https://www.kanzaki.com/docs/ical/recurrenceId.html
-		ICalendarUtils.RecurringRefs recurringRefs = ICalendarUtils.extractRecurringRefs(vtodo);
+		ICalendarUtils.RRInstanceInfo recurringInstanceInfo = ICalendarUtils.extractRRInstanceInfo(vtodo);
 		
 		// ASSIGNEES
 		//TODO
@@ -462,7 +462,7 @@ public class ICalendarInput implements TasksStreamReader {
 		Set<String> names = new LinkedHashSet(Arrays.asList(Property.CONTACT, Property.GEO, Property.URL, Property.COMMENT, Property.RESOURCES));
 		PropertyList extraProps = ICalendarUtils.extractProperties(vtodo, names, true, null);
 		
-		return new TaskInput(task, recurringRefs, relatedToUid, extraProps, includeSourceComponentInOutput ? vtodo : null);
+		return new TaskInput(task, recurringInstanceInfo, relatedToUid, extraProps, includeSourceComponentInOutput ? vtodo : null);
 	}
 	
 	private String[] toTag(XProperty xTag) throws Exception {
