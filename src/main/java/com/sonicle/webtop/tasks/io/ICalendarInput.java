@@ -349,12 +349,14 @@ public class ICalendarInput implements TasksStreamReader {
 		// RRULE, EXDATE: defines the repeating pattern and the list of exceptions
 		// https://www.kanzaki.com/docs/ical/rrule.html
 		// https://www.kanzaki.com/docs/ical/exdate.html
-		ICalendarUtils.RecurInfo recurInfo = ICalendarUtils.extractRecurInfo(vtodo);
-		if (recurInfo.recur != null && start != null) {
-			task.setRecurrence(new TaskRecurrence(recurInfo.recur.toString(), start, recurInfo.exDates));
-			
-		} else if (recurInfo.recur != null) {
-			LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Recurrence rule ignored: Start is missing");
+		ICalendarUtils.RRInfo rrInfo = ICalendarUtils.extractRRInfo(vtodo);
+		if (rrInfo != null) {
+			if (start != null) {
+				task.setRecurrence(new TaskRecurrence(rrInfo.getRecur().toString(), start, rrInfo.getExDates()));
+
+			} else {
+				LogHandler.log(logHandler, 1, LogEntry.Level.WARN, "Recurrence rule ignored: Start is missing");
+			}
 		}
 		
 		// RECURRENCE-ID: identifies a specific instance of a recurring master entry
